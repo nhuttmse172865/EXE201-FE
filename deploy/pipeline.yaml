@@ -1,0 +1,10 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: exe201-cd
+  labels:
+    app: exe201-fe
+description: CD delivery pipeline
+serialPipeline:
+  stages:
+    - targetId: prod

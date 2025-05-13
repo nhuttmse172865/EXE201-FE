@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exe201-fe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: exe201-fe
+  template:
+    metadata:
+      labels:
+        app: exe201-fe
+    spec:
+      containers:
+        - name: exe201-container-fe
+          image: asia-southeast1-docker.pkg.dev/exe201/exe201-build-fe:prod
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exe201-service-fe
+spec:
+  selector:
+    app: exe-app-fe
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
