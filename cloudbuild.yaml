@@ -1,9 +1,9 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'asia-southeast1-docker.pkg.dev/exe201/exe201-fe/exe201-build-fe:prod', '.' ]
+    args: [ 'build', '-t', 'asia-southeast1-docker.pkg.dev/exe201-459717/exe201-fe/exe201-build-fe:prod', '.' ]
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'asia-southeast1-docker.pkg.dev/exe201/exe201-fe/exe201-build-fe:prod' ]
+    args: [ 'push', 'asia-southeast1-docker.pkg.dev/exe201-459717/exe201-fe/exe201-build-fe:prod' ]
 
 
   - name: 'google/cloud-sdk:latest'
