@@ -4,7 +4,7 @@ metadata:
   name: exe201-fe
   namespace: exe201-app-namespace
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: exe201-fe
