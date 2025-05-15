@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: exe201-fe
-  namespace: exe201-app-namespace
 spec:
   replicas: 1
   selector:
@@ -24,7 +23,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: exe201-fe-service
-  namespace: exe201-app-namespace
 spec:
   selector:
     app: exe201-fe
