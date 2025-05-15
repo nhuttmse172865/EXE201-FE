@@ -14,6 +14,6 @@ steps:
       - |
         gcloud deploy apply --file deploy/pipeline.yaml --region=asia-southeast1
         gcloud deploy apply --file deploy/prod.yaml --region=asia-southeast1
-        gcloud deploy releases create 'app-release-${SHORT_SHA}' --delivery-pipeline=exe201-cd --region=asia-southeast1 --from-k8s-manifest=./kubernetes/exe201.yaml
+        gcloud deploy releases create 'app-release-${SHORT_SHA}' --delivery-pipeline=exe201-cd-fe --region=asia-southeast1 --from-k8s-manifest=./kubernetes/exe201.yaml
 options:
   logging: CLOUD_LOGGING_ONLY
