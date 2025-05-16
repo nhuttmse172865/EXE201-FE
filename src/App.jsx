@@ -3,7 +3,7 @@ import React from "react"
 function App() {
 
   return (
-    <p>EXE201</p>
+    <p className="text-red-800 text-6xl">EXE201</p>
   )
 }
 
