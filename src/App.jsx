@@ -1,10 +1,13 @@
-import React from "react"
+import { BrowserRouter, Routes } from "react-router-dom";
+import "./styles/index.css";
+import Router from "./router/Router";
 
 function App() {
-
   return (
-    <p className="text-red-800 text-6xl">EXE201</p>
-  )
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
