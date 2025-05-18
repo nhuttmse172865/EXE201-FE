@@ -1,8 +1,5 @@
 @layer base {
-
   @import "tailwindcss";
-  @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
-  
   :root {
     --font-title: "Playfair Display", serif;
     --default-font-family: "Poppins";
@@ -27,4 +24,11 @@
     --color-primary-20: rgba(255, 79, 157, 0.2);
     --color-primary-10: rgba(255, 79, 157, 0.1);
   }
+}
+
+.font-family-playfair-display {
+  font-family: "Playfair Display", serif;
+}
+.font-family-poppins{
+  font-family: "Poppins";
 }
