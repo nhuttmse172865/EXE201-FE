@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: exe201-fe
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: exe201-fe
@@ -13,7 +13,7 @@ spec:
         app: exe201-fe
     spec:
       containers:
-        - name: exe201-container-fe
+        - name: exe201-fe-container
           image: asia-southeast1-docker.pkg.dev/exe201-459717/exe201-fe/exe201-build-fe:prod
           imagePullPolicy: Always
           ports:
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: exe201-service-fe
+  name: exe201-fe-service
 spec:
   selector:
-    app: exe-app-fe
+    app: exe201-fe
   ports:
     - protocol: TCP
       port: 80

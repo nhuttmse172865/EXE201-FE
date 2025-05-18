@@ -7,4 +7,4 @@ metadata:
 description: prod
 #requireApproval: true
 gke:
-  cluster: projects/exe201-459717/locations/asia-southeast1/clusters/exe201-fe
+  cluster: projects/exe201-459717/locations/asia-southeast1/clusters/exe201-cluster

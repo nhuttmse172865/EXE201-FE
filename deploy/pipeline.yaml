@@ -1,7 +1,7 @@
 apiVersion: deploy.cloud.google.com/v1
 kind: DeliveryPipeline
 metadata:
-  name: exe201-cd
+  name: exe201-cd-fe
   labels:
     app: exe201-fe
 description: CD delivery pipeline
