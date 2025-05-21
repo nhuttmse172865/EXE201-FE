@@ -33,3 +33,13 @@
 .font-family-poppins{
   font-family: "Poppins";
 }
+*::-webkit-scrollbar {
+  width: 2px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-100);
+  border-radius: 50px;
+}
+.scroll-hidden::-webkit-scrollbar {
+  width: 0;
+}
