@@ -2,7 +2,7 @@ import React from "react";
 
 const ServiceSection = () => {
   return (
-    <div className="min-h-[100vh]">
+    <div className="">
       <div className="mx-auto container w-[100%] h-[100%] relative">
         <div className=" absolute w-[28vw] bg-white p-5 pl-0 rounded-br-2xl z-40">
           <h1 className="text-[25px] font-family-playfair-display text-(--color-title-100)">
