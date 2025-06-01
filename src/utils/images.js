@@ -7,6 +7,7 @@ import instagram from "../assets/images/instagram.png";
 import location from "../assets/images/location.png";
 import star from "../assets/images/star.png";
 import arrowRight from "../assets/images/arrow-right.png";
+import googleIcon from "../assets/images/google_icon.png"
 
 const IMAGES = {
   logo,
@@ -18,6 +19,7 @@ const IMAGES = {
   location,
   star,
   arrowRight,
+  googleIcon
 };
 
 export default IMAGES;

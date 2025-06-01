@@ -5,7 +5,7 @@ import VeterinarySection from "./veterinary-section/VeterinarySection";
 import FeaturedService from "./featured-services-section/FeaturedService";
 const Body = () => {
   return (
-    <div className=" min-h-[calc(100vh-200px)]">
+    <div className="min-h-[calc(100vh-200px)]">
       <HeadSection />
       <ServiceSection />
       <FeaturedService />

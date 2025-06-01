@@ -6,8 +6,8 @@ import NotFound from "../pages/404/NotFound";
 const Router = () => {
   const generateRoutes = (routes) => {
     return routes.map((route) => (
-      <Route path={route.path}>
-        <Route index element={route.page} />
+      <Route path={route.path} element={route?.isOutlet ? route?.page : null}>
+        <Route index element={route.isOutlet ? route?.subRouter[0]?.page : route.page} />
         {route.subRouter && generateRoutes(route.subRouter)}
       </Route>
     ));
