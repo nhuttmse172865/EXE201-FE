@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const Body = () => {
   return (
-    <div className="" style={{ height: "calc(100vh - 70px)" }}>
+    <div className="overflow-hidden" style={{ height: "calc(100vh - 70px)" }}>
       <div
         id="container-login"
         className="container mx-auto h-[100%] grid grid-cols-12"

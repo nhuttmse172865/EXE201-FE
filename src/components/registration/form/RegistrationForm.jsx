@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 const RegistrationForm = () => {
   return (
-    <div className="grid items-center relative top-[50%] translate-y-[-50%] max-w-[360px]">
+    <div className="grid items-center relative top-[50%] translate-y-[-50%] max-w-[360px] scroll-hidden">
       <div>
         <p className="mb-5 text-(--color-primary-100) text-[14px]">Register</p>
         <h1 className="font-family-playfair-display text-3xl text-(--color-title-100)">

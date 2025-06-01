@@ -16,7 +16,7 @@ const RegistrationEmail = () => {
   }`;
 
   return (
-    <div className="grid items-start mt-24 max-w-[350px]">
+    <div className="grid items-start mt-24 scroll-hidden max-w-[350px] overflow-hidden ">
       <div className="mb-2">
         <p className="mb-5 text-(--color-primary-100) text-[14px]">Register</p>
         <h1 className="font-family-playfair-display text-3xl text-(--color-title-100)">
