@@ -5,6 +5,7 @@ import Registration from "../pages/registration/Registration";
 import RegistrationEmail from "../components/registration/email/RegistrationEmail";
 import RegistrationForm from "../components/registration/form/RegistrationForm";
 import ConfirmEmail from "../components/registration/confirm/ConfirmEmail";
+import PartnerRegistration from "../pages/customer/partner-registration/PartnerRegistration";
 
 const ROUTER = [
   {
@@ -14,10 +15,10 @@ const ROUTER = [
     title: "Home",
     subRouter: [
       {
-        name: "",
-        path: "",
-        page: "",
-        title: "",
+        name: "Partner Registration",
+        path: "partner-registration",
+        page: <PartnerRegistration />,
+        title: "Partner Registration",
         subRouter: null,
       },
     ],

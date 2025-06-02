@@ -108,7 +108,7 @@ const Content = () => {
     const timer = setTimeout(() => {
       handleScrollNext();
       setAutoScrollToggle((prev) => !prev);
-    }, 10000);
+    }, 5000);
     return () => {
       clearTimeout(timer);
     };

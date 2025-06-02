@@ -4,12 +4,12 @@ const NAVIGATION_CUSTOMER_HEADER = [
     url: "/",
   },
   {
-    name: "Partner",
+    name: "Bookings",
     url: "",
   },
   {
-    name: "Bookings",
-    url: "",
+    name: "Partner",
+    url: "/partner-registration",
   },
   {
     name: "About",
@@ -21,6 +21,4 @@ const NAVIGATION_CUSTOMER_HEADER = [
   },
 ];
 
-export {
-    NAVIGATION_CUSTOMER_HEADER
-}
+export { NAVIGATION_CUSTOMER_HEADER };

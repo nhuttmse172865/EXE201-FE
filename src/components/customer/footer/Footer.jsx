@@ -2,11 +2,11 @@ import React from "react";
 import Action from "./action/Action";
 import Information from "./information/Information";
 
-const Footer = () => {
+const Footer = ({hiddenAction = false }) => {
   return (
     <div className="">
       <div className="bg-(--color-primary-5)">
-           <Action />
+           {!hiddenAction && <Action />}
       </div>
       <div className="">
         <Information />
