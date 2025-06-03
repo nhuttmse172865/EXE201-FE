@@ -1,11 +1,11 @@
-import React from "react";
-import Background from "./background/background";
+import React from "react"
 import OUTSTANDING_LIST from "../../../../../../utils/outstanding-partner";
+import Background from "./background/Background"
 
 const Outstanding = () => {
   return (
     <div className="bg-[#EBEBEB] w-full h-full rounded-[30px] relative">
-      <Background />
+       <Background />
       <div className=" absolute bottom-[15px] right-[15px] flex gap-[10px] ">
         {OUTSTANDING_LIST.map((item) => (
           <div className="bg-[#F3F3F3] cursor-pointer text-[rgba(0,0,0,0.7)] px-[20px] py-[5px] text-[12px] rounded-[15px]">
