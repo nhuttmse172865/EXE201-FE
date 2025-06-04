@@ -27,7 +27,7 @@ const LoginContent = () => {
     if (!widthContent) {
       handleWidthContentLogin();
     }
-  });
+  },[]);
 
   return (
     <div

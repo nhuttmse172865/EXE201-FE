@@ -1,8 +1,13 @@
 import React from 'react'
+import Title from './content/title/Title'
+import Offer from './content/offer/Offer'
 
 const OfferSection = () => {
   return (
-    <div>OfferSection</div>
+    <div className='mx-auto container' id="container-offer-section">
+      <Title />
+      <Offer />
+    </div>
   )
 }
 
