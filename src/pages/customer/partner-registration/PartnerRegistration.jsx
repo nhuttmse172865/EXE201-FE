@@ -8,7 +8,11 @@ const PartnerRegistration = () => {
     <div>
       <Header isLogin={true} />
       <Body />
-      <Footer hiddenAction={true}/>
+      <Footer
+        h1="Ready to Take Your Clinic to the Next Level?"
+        p="Connect, Optimize, Grow Clinic."
+        button={"BE PARTNER"}
+      />
     </div>
   );
 };
