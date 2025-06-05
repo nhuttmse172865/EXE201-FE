@@ -1,8 +1,14 @@
-import React from "react";
+import React, {useRef } from "react";
+import useIsInViewport from "../../../../hooks/useIsInViewport";
 
 const ServiceSection = () => {
+  const serviceSectionRef = useRef(null);
+  const inView = useIsInViewport(serviceSectionRef, { threshold: 0.1 });
   return (
-    <div className="">
+    <div
+      className={`morph-in-item ${inView ? "morph-in-active" : ""}`}
+      ref={serviceSectionRef}
+    >
       <div className="mx-auto container w-[100%] h-[100%] relative">
         <div className=" absolute w-[28vw] bg-white p-5 pl-0 rounded-br-2xl z-40">
           <h1 className="text-[25px] font-family-playfair-display text-(--color-title-100)">

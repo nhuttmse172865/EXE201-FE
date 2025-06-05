@@ -9,6 +9,7 @@ import star from "../assets/images/star.png";
 import arrowRight from "../assets/images/arrow-right.png";
 import googleIcon from "../assets/images/google_icon.png"
 import arrowDown from "../assets/images/arrow-down.png"
+import clinicSample from "../assets/images/clinic-sample.jpg"
 
 const IMAGES = {
   logo,
@@ -21,7 +22,8 @@ const IMAGES = {
   star,
   arrowRight,
   googleIcon,
-  arrowDown
+  arrowDown,
+  clinicSample
 };
 
 export default IMAGES;
