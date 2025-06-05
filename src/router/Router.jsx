@@ -10,14 +10,16 @@ import { Link, useLocation } from "react-router-dom";
 import Promotion from "../pages/manager/Promotion";
 import RegistrationPartners from "../pages/manager/RegistrationPartners";
 import AvailablePartners from "../pages/manager/AvailablePartners";
+
  
 
 const Router = () => {
   const generateRoutes = (routes) => {
     return routes.map((route, index) => (
-    <Route path={route.path} key={index} element={route.page}>
-      {route.subRouter && generateRoutes(route.subRouter)}
-    </Route>
+      <Route path={route.path} element={route?.isOutlet ? route?.page : null}>
+        <Route index element={route.isOutlet ? route?.subRouter[0]?.page : route.page} />
+        {route.subRouter && generateRoutes(route.subRouter)}
+      </Route>
     ));
   };
   return (
