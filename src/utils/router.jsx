@@ -6,6 +6,7 @@ import RegistrationEmail from "../components/registration/email/RegistrationEmai
 import RegistrationForm from "../components/registration/form/RegistrationForm";
 import ConfirmEmail from "../components/registration/confirm/ConfirmEmail";
 import PartnerRegistration from "../pages/customer/partner-registration/PartnerRegistration";
+import PartnerRegistrationForm from "../pages/customer/partner-registration/form/PartnerRegistrationForm";
 
 const ROUTER = [
   {
@@ -19,7 +20,15 @@ const ROUTER = [
         path: "partner-registration",
         page: <PartnerRegistration />,
         title: "Partner Registration",
-        subRouter: null,
+        subRouter: [
+          {
+            name: "Registration Form",
+            path: "partner-registration-form",
+            page: <PartnerRegistrationForm />,
+            title: "Registration Form",
+            subRouter: null,
+          },
+        ],
       },
     ],
   },
