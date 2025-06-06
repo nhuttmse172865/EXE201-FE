@@ -7,7 +7,12 @@ const OnboardingProcess = () => {
   const onBoardingProcessRef = useRef(null);
   const inView = useIsInViewport(onBoardingProcessRef, { threshold: 0.1 });
   return (
-    <div className="my-28 bg-(--color-primary-5) py-20">
+    <div
+      className={`my-28 bg-(--color-primary-5) py-20 morph-in-item ${
+        inView ? "morph-in-active" : ""
+      }`}
+      ref={onBoardingProcessRef}
+    >
       <div className="mx-auto container">
         <Title />
         <Process />
