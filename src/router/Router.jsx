@@ -10,6 +10,11 @@ import { Link, useLocation } from "react-router-dom";
 import Promotion from "../pages/manager/Promotion";
 import RegistrationPartners from "../pages/manager/RegistrationPartners";
 import AvailablePartners from "../pages/manager/AvailablePartners";
+import RegistrationForm from "../pages/partner/RegistrationForm"; 
+import DashboardPartner from "../pages/partner/DashboardPartner";
+import ServicePartner from "../pages/partner/ServicePartner";
+import HospitalClinicPartner from "../pages/partner/HospitalClinicPartner";
+import DoctorPartner from "../pages/partner/DoctorPartner";
 
  
 
@@ -33,6 +38,11 @@ const Router = () => {
       <Route path="/partners" element={<Partners />} />
       <Route path="/partners/registration" element={<RegistrationPartners />} />
       <Route path="/partners/available" element={<AvailablePartners />} />
+      <Route path="/partnersforms" element={<RegistrationForm />} />
+      <Route path="/dashboard-partner" element={<DashboardPartner />} />
+      <Route path="/service-partner" element={<ServicePartner />} />
+      <Route path="/hospitalclinic-partner" element={<HospitalClinicPartner />} />
+      <Route path="/doctor-partner" element={<DoctorPartner/>} />
     </Routes>
   );
 };
