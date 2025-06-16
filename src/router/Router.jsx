@@ -6,7 +6,6 @@ import Dashboard from "../pages/manager/Dashboard";
 import Partners from "../pages/manager/Partners";
 import Plan from "../pages/manager/Plan";
 import Advertisement from "../pages/manager/Advertisement";
-import { Link, useLocation } from "react-router-dom";
 import Promotion from "../pages/manager/Promotion";
 import RegistrationPartners from "../pages/manager/RegistrationPartners";
 import AvailablePartners from "../pages/manager/AvailablePartners";

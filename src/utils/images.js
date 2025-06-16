@@ -10,6 +10,7 @@ import arrowRight from "../assets/images/arrow-right.png";
 import googleIcon from "../assets/images/google_icon.png"
 import arrowDown from "../assets/images/arrow-down.png"
 import clinicSample from "../assets/images/clinic-sample.jpg"
+import uploadFile from "../assets/images/upload-file.png"
 
 const IMAGES = {
   logo,
@@ -23,7 +24,8 @@ const IMAGES = {
   arrowRight,
   googleIcon,
   arrowDown,
-  clinicSample
+  clinicSample,
+  uploadFile
 };
 
 export default IMAGES;
