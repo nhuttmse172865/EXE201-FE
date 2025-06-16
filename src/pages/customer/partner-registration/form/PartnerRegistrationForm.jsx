@@ -5,8 +5,8 @@ import Body from "../../../../components/customer/partner/registration-form/Body
 
 const PartnerRegistrationForm = () => {
   return (
-    <div>
-      <Header isLogin={true} />
+    <div className="bg-[#f7f7f7]">
+      <Header isLogin={true} border={false}/>
       <Body />
       <Footer hiddenAction={true} />
     </div>
