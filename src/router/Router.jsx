@@ -15,7 +15,10 @@ import DashboardPartner from "../pages/partner/DashboardPartner";
 import ServicePartner from "../pages/partner/ServicePartner";
 import HospitalClinicPartner from "../pages/partner/HospitalClinicPartner";
 import DoctorPartner from "../pages/partner/DoctorPartner";
-
+import ReportBooking from "../pages/doctor/ReportBooking";
+import AccountSettings from "../pages/doctor/AccountSettings";
+import ReportConsult from "../pages/doctor/ReportConsult";
+import MessageCustomer from "../pages/doctor/MessageCustomer";
  
 
 const Router = () => {
@@ -43,6 +46,10 @@ const Router = () => {
       <Route path="/service-partner" element={<ServicePartner />} />
       <Route path="/hospitalclinic-partner" element={<HospitalClinicPartner />} />
       <Route path="/doctor-partner" element={<DoctorPartner/>} />
+      <Route path="/reportbooking-doctor" element={<ReportBooking />} />
+      <Route path="/account-settings" element={<AccountSettings />} />
+      <Route path="/reportconsult-doctor" element={<ReportConsult />} />
+      <Route path="/message-doctor" element={<MessageCustomer />} />
     </Routes>
   );
 };
