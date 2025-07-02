@@ -70,12 +70,3 @@ input[type="number"]::-webkit-outer-spin-button {
   width: 0;
   display: none;
 }
-
-.morph-in-item {
-  /* opacity: 0;
-  transition: all 1s ease-out;  */
-}
-
-.morph-in-active {
-  /* opacity: 1; */
-}

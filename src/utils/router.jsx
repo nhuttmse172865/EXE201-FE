@@ -1,4 +1,3 @@
-import React from "react";
 import Home from "../pages/customer/home/Home";
 import Login from "../pages/login/Login";
 import Registration from "../pages/registration/Registration";
@@ -8,6 +7,7 @@ import ConfirmEmail from "../components/registration/confirm/ConfirmEmail";
 import PartnerRegistration from "../pages/customer/partner-registration/PartnerRegistration";
 import PartnerRegistrationForm from "../pages/customer/partner-registration/form/PartnerRegistrationForm";
 import Booking from "../pages/customer/booking/Booking";
+import ServiceDetail from "../pages/customer/service-detail/ServiceDetail";
 
 const ROUTER = [
   {
@@ -32,11 +32,19 @@ const ROUTER = [
         ],
       },
       {
-        name: "Booking",
-        path: "booking",
+        name: "Services",
+        path: "services",
         page: <Booking />,
-        title: "Booking",
-        subRouter: [],
+        title: "Services",
+        subRouter: [
+           {
+            name: "Service Detail",
+            path: "service-detail/:id",
+            page: <ServiceDetail />,
+            title: "Service Detail",
+            subRouter: null,
+          },
+        ],
       },
     ],
   },

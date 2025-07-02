@@ -4,8 +4,8 @@ const NAVIGATION_CUSTOMER_HEADER = [
     url: "/",
   },
   {
-    name: "Bookings",
-    url: "/booking",
+    name: "Services",
+    url: "/services",
   },
   {
     name: "Partner",
