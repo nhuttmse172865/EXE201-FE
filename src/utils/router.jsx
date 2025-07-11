@@ -8,6 +8,7 @@ import PartnerRegistration from "../pages/customer/partner-registration/PartnerR
 import PartnerRegistrationForm from "../pages/customer/partner-registration/form/PartnerRegistrationForm";
 import Booking from "../pages/customer/booking/Booking";
 import ServiceDetail from "../pages/customer/service-detail/ServiceDetail";
+import BookProcess from "../pages/customer/book-process/BookProcess";
 
 const ROUTER = [
   {
@@ -32,12 +33,19 @@ const ROUTER = [
         ],
       },
       {
+        name: "Booking",
+        path: "booking-process",
+        page: <BookProcess />,
+        title: "Booking",
+        subRouter: [],
+      },
+      {
         name: "Services",
         path: "services",
         page: <Booking />,
         title: "Services",
         subRouter: [
-           {
+          {
             name: "Service Detail",
             path: "service-detail/:id",
             page: <ServiceDetail />,
