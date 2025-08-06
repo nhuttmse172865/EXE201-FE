@@ -9,18 +9,8 @@ import Advertisement from "../pages/manager/Advertisement";
 import Promotion from "../pages/manager/Promotion";
 import RegistrationPartners from "../pages/manager/RegistrationPartners";
 import AvailablePartners from "../pages/manager/AvailablePartners";
-import RegistrationForm from "../pages/partner/RegistrationForm"; 
-import DashboardPartner from "../pages/partner/DashboardPartner";
-import ServicePartner from "../pages/partner/ServicePartner";
-import HospitalClinicPartner from "../pages/partner/HospitalClinicPartner";
-import DoctorPartner from "../pages/partner/DoctorPartner";
-import ReportBooking from "../pages/doctor/ReportBooking";
-import AccountSettings from "../pages/doctor/AccountSettings";
-import ReportConsult from "../pages/doctor/ReportConsult";
-import MessageCustomer from "../pages/doctor/MessageCustomer";
-import ShopPet  from "../pages/customer/shop/ShopPet"; 
-import DetailProduct from "../pages/customer/shop/DetailProduct";
-import Cart from "../pages/customer/shop/Cart";
+
+ 
 
 const Router = () => {
   const generateRoutes = (routes) => {
@@ -42,18 +32,6 @@ const Router = () => {
       <Route path="/partners" element={<Partners />} />
       <Route path="/partners/registration" element={<RegistrationPartners />} />
       <Route path="/partners/available" element={<AvailablePartners />} />
-      <Route path="/partnersforms" element={<RegistrationForm />} />
-      <Route path="/dashboard-partner" element={<DashboardPartner />} />
-      <Route path="/service-partner" element={<ServicePartner />} />
-      <Route path="/hospitalclinic-partner" element={<HospitalClinicPartner />} />
-      <Route path="/doctor-partner" element={<DoctorPartner/>} />
-      <Route path="/reportbooking-doctor" element={<ReportBooking />} />
-      <Route path="/account-settings" element={<AccountSettings />} />
-      <Route path="/reportconsult-doctor" element={<ReportConsult />} />
-      <Route path="/message-doctor" element={<MessageCustomer />} />
-      <Route path="/shoppet" element={<ShopPet />} />
-<Route path="/product/:productId" element={<DetailProduct />} />
-<Route path="/cart" element={<Cart />} />
     </Routes>
   );
 };
