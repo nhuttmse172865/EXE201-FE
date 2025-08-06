@@ -12,6 +12,11 @@ const NAVIGATION_CUSTOMER_HEADER = [
     url: "/partner-registration",
   },
   {
+    name: "Shop",
+    url: "/shoppet",
+  }
+  ,
+  {
     name: "About",
     url: "",
   },
