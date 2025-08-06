@@ -6,7 +6,6 @@ import Dashboard from "../pages/manager/Dashboard";
 import Partners from "../pages/manager/Partners";
 import Plan from "../pages/manager/Plan";
 import Advertisement from "../pages/manager/Advertisement";
-import { Link, useLocation } from "react-router-dom";
 import Promotion from "../pages/manager/Promotion";
 import RegistrationPartners from "../pages/manager/RegistrationPartners";
 import AvailablePartners from "../pages/manager/AvailablePartners";
@@ -19,7 +18,9 @@ import ReportBooking from "../pages/doctor/ReportBooking";
 import AccountSettings from "../pages/doctor/AccountSettings";
 import ReportConsult from "../pages/doctor/ReportConsult";
 import MessageCustomer from "../pages/doctor/MessageCustomer";
- 
+import ShopPet  from "../pages/customer/shop/ShopPet"; 
+import DetailProduct from "../pages/customer/shop/DetailProduct";
+import Cart from "../pages/customer/shop/Cart";
 
 const Router = () => {
   const generateRoutes = (routes) => {
@@ -50,6 +51,9 @@ const Router = () => {
       <Route path="/account-settings" element={<AccountSettings />} />
       <Route path="/reportconsult-doctor" element={<ReportConsult />} />
       <Route path="/message-doctor" element={<MessageCustomer />} />
+      <Route path="/shoppet" element={<ShopPet />} />
+<Route path="/product/:productId" element={<DetailProduct />} />
+<Route path="/cart" element={<Cart />} />
     </Routes>
   );
 };
