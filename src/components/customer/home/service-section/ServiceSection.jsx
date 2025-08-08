@@ -1,4 +1,4 @@
-import React, {useRef } from "react";
+import React, { useRef } from "react";
 import useIsInViewport from "../../../../hooks/useIsInViewport";
 
 const ServiceSection = () => {
@@ -21,8 +21,12 @@ const ServiceSection = () => {
           <div className="bg-[#f2f2f2] w-[16px] h-[16px] z-50 absolute top-[100%] left-[0] rounded-tl-2xl "></div>
         </div>
         <div className="h-[500px] relative overflow-hidden flex gap-[20px]">
-          <div className="bg-[rgba(0,0,0,0.05)] h-full w-[60%] rounded-2xl overflow-hidden"></div>
-          <div className="bg-[rgba(0,0,0,0.05)] h-full w-[40%] rounded-2xl overflow-hidden"></div>
+          <div className="bg-[rgba(0,0,0,0.05)] h-full w-[60%] rounded-2xl overflow-hidden">
+            <img src="src\assets\images\569cd953a4ce2d9074df.jpg" />
+          </div>
+          <div className="bg-[rgba(0,0,0,0.05)] h-full w-[40%] rounded-2xl overflow-hidden">
+            <img src="src\assets\images\c019b9d6c44b4d15145a.jpg" />
+          </div>
         </div>
       </div>
     </div>
