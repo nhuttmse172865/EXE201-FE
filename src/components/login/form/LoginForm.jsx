@@ -58,8 +58,11 @@ const LoginForm = () => {
       });
 
       if (res.ok) {
+        const token = await res.text();
+        console.log(token);
         // ✅ Login thành công
         localStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("token", token);
         navigate("/");
       } else {
         // ❌ Sai thông tin đăng nhập
