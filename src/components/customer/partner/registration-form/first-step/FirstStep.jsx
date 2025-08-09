@@ -1,7 +1,7 @@
 import React from "react";
 import Content from "./content/Content";
 
-const FirstStep = ({setCurrentStep}) => {
+const FirstStep = ({ setCurrentStep, formData, setFormData }) => {
   return (
     <div className=" w-full flex justify-center gap-[80px]">
       <div className="flex w-[25vw] flex-col mt-[20vh]">
@@ -18,7 +18,11 @@ const FirstStep = ({setCurrentStep}) => {
           </p>
         </div>
       </div>
-      <Content setCurrentStep={setCurrentStep}/>
+      <Content
+        setCurrentStep={setCurrentStep}
+        formData={formData}
+        setFormData={setFormData}
+      />
     </div>
   );
 };

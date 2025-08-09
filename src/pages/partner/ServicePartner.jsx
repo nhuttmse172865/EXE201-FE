@@ -30,7 +30,7 @@ const ServicePartner = () => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
-  
+
   const [formServices, setFormServices] = useState(
     serviceData.map((service) => ({
       ...service,
@@ -46,9 +46,12 @@ const ServicePartner = () => {
   const [otherPrice, setOtherPrice] = useState("");
   const [isOtherChecked, setIsOtherChecked] = useState(false);
 
-  const totalPages = Math.ceil(serviceData.length / itemsPerPage);
+  const totalPages = Math.ceil(formServices.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = serviceData.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = formServices.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   const handlePriceChange = (index, value) => {
     const numeric = parseFloat(value);
@@ -83,71 +86,163 @@ const ServicePartner = () => {
     );
   };
 
-const handleConfirm = () => {
-  const hasValidService = formServices.some(
-    (s) => s.selected && parseFloat(s.price) > 0
-  );
+  // SINGLE async handleConfirm (dùng fetch)
+  const handleConfirm = async () => {
+    const selectedServices = formServices
+      .filter((s) => s.selected && parseFloat(s.price) > 0)
+      .map((s) => ({
+        name: s.name,
+        price: parseFloat(s.price),
+      }));
 
-  const hasValidConsulting =
-    isConsultingChecked &&
-    (!showConsultingPrice || (showConsultingPrice && parseFloat(consultingPrice) > 0));
+    const hasValidService = selectedServices.length > 0;
 
-  const hasValidOther =
-    isOtherChecked &&
-    otherServiceName.trim() !== "" &&
-    parseFloat(otherPrice) > 0;
+    const hasValidConsulting =
+      isConsultingChecked &&
+      (!showConsultingPrice ||
+        (showConsultingPrice && parseFloat(consultingPrice) > 0));
 
-  // Kiểm tra tổng thể: phải có ít nhất 1 mục hợp lệ
-  if (!hasValidService && !hasValidConsulting && !hasValidOther) {
-    toast.error("Please provide at least one valid service, consulting fee or other service.");
-    return;
-  }
+    const hasValidOther =
+      isOtherChecked &&
+      otherServiceName.trim() !== "" &&
+      parseFloat(otherPrice) > 0;
 
-  // Tư vấn có chọn trả phí nhưng chưa nhập số hợp lệ
-  if (isConsultingChecked && showConsultingPrice) {
-    if (!consultingPrice || parseFloat(consultingPrice) <= 0) {
-      toast.error("Please enter a valid consulting price.");
+    // Kiểm tra tổng thể: phải có ít nhất 1 mục hợp lệ
+    if (!hasValidService && !hasValidConsulting && !hasValidOther) {
+      toast.error(
+        "Please provide at least one valid service, consulting fee or other service."
+      );
       return;
     }
-  }
 
-  // Other thiếu tên hoặc giá không hợp lệ
-  if (isOtherChecked) {
-    if (!otherServiceName.trim()) {
-      toast.error("Please enter a name for the 'Other' service.");
-      return;
+    // Tư vấn có chọn trả phí nhưng chưa nhập số hợp lệ
+    if (isConsultingChecked && showConsultingPrice) {
+      if (!consultingPrice || parseFloat(consultingPrice) <= 0) {
+        toast.error("Please enter a valid consulting price.");
+        return;
+      }
     }
-    if (!otherPrice || parseFloat(otherPrice) <= 0) {
-      toast.error("Please enter a valid price for the 'Other' service.");
-      return;
+
+    // Other thiếu tên hoặc giá không hợp lệ
+    if (isOtherChecked) {
+      if (!otherServiceName.trim()) {
+        toast.error("Please enter a name for the 'Other' service.");
+        return;
+      }
+      if (!otherPrice || parseFloat(otherPrice) <= 0) {
+        toast.error("Please enter a valid price for the 'Other' service.");
+        return;
+      }
     }
-  }
 
-  toast.success("Services updated successfully!");
-  setShowForm(false);
-};
+    // Build payload: hợp nhất selected + consulting + other
+    const payload = {
+      hospitalService: [
+        ...selectedServices,
+        ...(isConsultingChecked
+          ? [
+              {
+                name: "Providing Consulting Online",
+                price: showConsultingPrice ? parseFloat(consultingPrice) : 0,
+              },
+            ]
+          : []),
+        ...(isOtherChecked
+          ? [
+              {
+                name: otherServiceName.trim(),
+                price: parseFloat(otherPrice),
+              },
+            ]
+          : []),
+      ],
+    };
 
+    // ---- THAY đổi API_URL và cách lấy token nếu cần ----
+    const API_URL = "http://localhost:5000/api/services"; // <- đổi thành API của bạn
+    const token = sessionStorage.getItem("token"); // hoặc lấy từ prop/context
+    console.log(JSON.stringify(payload));
+    // try {
+    //   const res = await fetch(API_URL, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    //     },
+    //     body: JSON.stringify(payload),
+    //   });
+
+    //   if (!res.ok) {
+    //     const text = await res.text().catch(() => null);
+    //     throw new Error(`HTTP ${res.status} ${text || ""}`);
+    //   }
+
+    //   const data = await res.json().catch(() => null);
+    //   console.log("Server response:", data);
+
+    //   toast.success("Services updated successfully!");
+    //   setShowForm(false);
+
+    //   // Optionally update local UI (nếu muốn reflect ngay)
+    //   // ví dụ cập nhật formServices để hiển thị giá mới (nếu server chấp nhận)
+    //   // setFormServices(prev => prev.map(s => {
+    //   //   const found = payload.services.find(ps => ps.name === s.name);
+    //   //   return found ? { ...s, price: String(found.price), selected: true } : s;
+    //   // }));
+    // } catch (error) {
+    //   console.error("Error updating services:", error);
+    //   toast.error("Failed to update services.");
+    // }
+  };
 
   return (
     <div className="flex min-h-screen font-sans bg-pink-100">
       {/* Sidebar */}
-        <aside className="w-60 fixed top-0 left-0 h-full bg-white rounded-xl p-4 shadow-lg">
-          <nav className="space-y-2 mt-10">
-            <div className="text-gray-400 font-semibold">MENU</div>
-            <Link to="/dashboard-partner" className={`flex items-center gap-2 p-2 rounded cursor-pointer ${location.pathname === "/dashboard-partner" ? "text-pink-500 font-semibold bg-pink-100" : "text-gray-700 hover:bg-gray-100"}`}>
-              <FaTachometerAlt /> Dashboard
-            </Link>
-            <Link to="/service-partner" className={`flex items-center gap-2 p-2 rounded cursor-pointer ${location.pathname === "/service-partner" ? "text-pink-500 font-semibold bg-pink-100" : "text-gray-700 hover:bg-gray-100"}`}>
-              <FaHandshake /> Service
-            </Link>
-            <Link to="/doctor-partner" className={`flex items-center gap-2 p-2 rounded cursor-pointer ${location.pathname === "/doctor-partner" ? "text-pink-500 font-semibold bg-pink-100" : "text-gray-700 hover:bg-gray-100"}`}>
-              <FaBullhorn /> Doctor
-            </Link>
-            <Link to="/hospitalclinic-partner" className={`flex items-center gap-2 p-2 rounded cursor-pointer ${location.pathname === "/hospitalclinic-partner" ? "text-pink-500 font-semibold bg-pink-100" : "text-gray-700 hover:bg-gray-100"}`}>
-              <FaGift /> Hospital/Clinic
-            </Link>
-          </nav>
-        </aside>
+      <aside className="w-60 fixed top-0 left-0 h-full bg-white rounded-xl p-4 shadow-lg">
+        <nav className="space-y-2 mt-10">
+          <div className="text-gray-400 font-semibold">MENU</div>
+          <Link
+            to="/dashboard-partner"
+            className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
+              location.pathname === "/dashboard-partner"
+                ? "text-pink-500 font-semibold bg-pink-100"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <FaTachometerAlt /> Dashboard
+          </Link>
+          <Link
+            to="/service-partner"
+            className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
+              location.pathname === "/service-partner"
+                ? "text-pink-500 font-semibold bg-pink-100"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <FaHandshake /> Service
+          </Link>
+          <Link
+            to="/doctor-partner"
+            className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
+              location.pathname === "/doctor-partner"
+                ? "text-pink-500 font-semibold bg-pink-100"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <FaBullhorn /> Doctor
+          </Link>
+          <Link
+            to="/hospitalclinic-partner"
+            className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
+              location.pathname === "/hospitalclinic-partner"
+                ? "text-pink-500 font-semibold bg-pink-100"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <FaGift /> Hospital/Clinic
+          </Link>
+        </nav>
+      </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-8 ml-60">
@@ -159,34 +254,42 @@ const handleConfirm = () => {
             <FaSearch className="text-gray-500" />
             <FaBell className="text-gray-500" />
             <div className="flex items-center gap-2">
-              <img src="https://i.pravatar.cc/40" alt="avatar" className="w-8 h-8 rounded-full" />
+              <img
+                src="https://i.pravatar.cc/40"
+                alt="avatar"
+                className="w-8 h-8 rounded-full"
+              />
               <div>
                 <p className="text-sm font-bold">Tran Minh Nhut</p>
-                <p className="text-xs text-gray-500">nhutminhsondesign@gmail.com</p>
+                <p className="text-xs text-gray-500">
+                  nhutminhsondesign@gmail.com
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Update Button */}
-{!showForm && (
-  <div className="mb-5">
-    <button
-      className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600"
-      onClick={() => setShowForm(true)}
-    >
-      Update Service
-    </button>
-  </div>
-)}
+        {!showForm && (
+          <div className="mb-5">
+            <button
+              className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600"
+              onClick={() => setShowForm(true)}
+            >
+              Update Service
+            </button>
+          </div>
+        )}
 
         {/* Form or Table */}
         {showForm ? (
           <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold text-gray-500 mb-6">List of Services</h2>
+            <h2 className="text-lg font-semibold text-gray-500 mb-6">
+              List of Services
+            </h2>
 
             <div className="grid grid-cols-2 gap-x-10 gap-y-4 text-sm text-gray-700 mb-6">
-              {formServices.slice(0, 6).map((service, index) => (
+              {formServices.map((service, index) => (
                 <label key={index} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -194,7 +297,7 @@ const handleConfirm = () => {
                     checked={service.selected}
                     onChange={() => handleCheckboxChange(index)}
                   />
-                  <span>{service.name}</span>
+                  <span className="w-56">{service.name}</span>
                   <input
                     type="text"
                     value={service.price}
@@ -222,7 +325,9 @@ const handleConfirm = () => {
                 <span>Provide online consulting services</span>
               </label>
               <div className="flex items-center space-x-4 ml-6 text-sm">
-                <span className="font-semibold text-gray-500">Consulting fee</span>
+                <span className="font-semibold text-gray-500">
+                  Consulting fee
+                </span>
                 <label className="flex items-center space-x-2">
                   <input
                     type="radio"
@@ -279,7 +384,9 @@ const handleConfirm = () => {
               <input
                 type="text"
                 className={`border rounded-md px-2 py-1 text-sm w-24 text-center ${
-                  otherPrice !== "" && parseFloat(otherPrice) <= 0 ? "border-red-500" : ""
+                  otherPrice !== "" && parseFloat(otherPrice) <= 0
+                    ? "border-red-500"
+                    : ""
                 }`}
                 placeholder="20"
                 value={otherPrice}
@@ -316,7 +423,11 @@ const handleConfirm = () => {
               </thead>
               <tbody>
                 {currentItems.map((service, index) => (
-                  <tr key={index} className="border-b border-gray-200" style={{ height: "60px" }}>
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200"
+                    style={{ height: "60px" }}
+                  >
                     <td className="text-gray-800 text-sm">{service.name}</td>
                     <td className="text-gray-800 text-sm">${service.price}</td>
                   </tr>
@@ -346,7 +457,9 @@ const handleConfirm = () => {
                 </button>
               ))}
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 rounded bg-gray-100 text-gray-600"
               >
