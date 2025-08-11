@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: exe201-fe-container
-          image: asia-southeast1-docker.pkg.dev/exe201-459717/exe201-fe/exe201-build-fe:prod
+          image: asia-southeast1-docker.pkg.dev/exe201-468211/exe201/exe201-build-fe:prod
           imagePullPolicy: Always
           ports:
             - containerPort: 80
