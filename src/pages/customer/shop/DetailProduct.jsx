@@ -1,36 +1,47 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import Header from "../../../components/customer/header/Header";
-import Footer from "../../../components/customer/footer/Footer";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import Header from '../../../components/customer/header/Header';
+import Footer from '../../../components/customer/footer/Footer';
 import { useCart } from "../../../contexts/CartContext";
-const mockProducts = {
-  "dog-food": {
-    name: "Dog Food Premium",
-    image: "/src/assets/images/dog-food.png",
-    price: "$25.00",
-    description: "High-quality food for your dog.",
-    rating: 4.9,
-    details: "This premium dog food is made with natural ingredients, providing complete nutrition.",
-  },
-  "cat-scratcher": {
-    name: "Cat Scratcher",
-    image: "/src/assets/images/cat-scratcher.jpg",
-    price: "$15.00",
-    description: "Durable scratcher for cats.",
-    rating: 4.8,
-    details: "Helps your cat stay active and keeps claws healthy. Made from eco-friendly materials.",
-  },
-};
 
 const DetailProduct = () => {
-  const { productId } = useParams();
-  const product = mockProducts[productId];
-  const { addToCart } = useCart();  
-  if (!product) {
-    return <div className="text-center mt-20 text-red-500">Product not found</div>;
-  }
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const { addToCart } = useCart(); 
 
-  const handleAddToCart = () => {
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                // Replace with your actual API endpoint
+                const response = await axios.get(`http://localhost:8080/product/${id}`);
+                setProduct(response.data);
+            } catch (err) {
+                setError('Failed to fetch product details.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    if (!product) {
+        return <div>Product not found.</div>;
+    }
+
+    const handleAddToCart = () => {
     addToCart(product);
     alert("Product added to cart!");
   };
@@ -40,7 +51,7 @@ const DetailProduct = () => {
     alert("Redirecting to checkout...");
   };
 
-  return (
+    return (
     <div>
       <Header />
 
@@ -64,7 +75,7 @@ const DetailProduct = () => {
           <div className="md:w-1/2">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <p className="text-xl text-pink-600 font-semibold mb-2">{product.price}</p>
-            <p className="text-sm text-yellow-600 mb-2">⭐ {product.rating} / 5</p>
+            {/* <p className="text-sm text-yellow-600 mb-2">⭐ {product.rating} / 5</p> */}
             <p className="mb-4 text-gray-700">{product.details}</p>
 
             <div className="flex gap-4">

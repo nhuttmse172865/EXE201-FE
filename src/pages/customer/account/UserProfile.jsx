@@ -29,6 +29,9 @@ const UserProfile = () => {
     address: "30 xa lộ hà nội, tp HCM",
   });
 
+  console.log(form);
+  
+
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -54,7 +57,7 @@ const UserProfile = () => {
         </div>
 
         <h1 className="text-2xl md:text-3xl font-semibold mb-6">
-          Welcome, <span className="text-pink-600">Alexa Rawles</span>
+          Welcome, <span className="text-pink-600">{form.fullName}</span>
         </h1>
 
         <div className="grid grid-cols-12 gap-6">
@@ -105,7 +108,7 @@ const UserProfile = () => {
                       className="w-16 h-16 rounded-full border-4 border-white shadow"
                     />
                     <div className="pb-1">
-                      <div className="font-semibold">Alexa Rawles</div>
+                      <div className="font-semibold">{form.fullName}</div>
                       <div className="text-sm text-gray-500">{form.email}</div>
                     </div>
                   </div>
