@@ -6,7 +6,7 @@ import { useCart } from "../../../contexts/CartContext";
 const mockProducts = {
   "dog-food": {
     name: "Dog Food Premium",
-    image: "/images/products/dog-food.jpg",
+    image: "/src/assets/images/dog-food.png",
     price: "$25.00",
     description: "High-quality food for your dog.",
     rating: 4.9,
@@ -14,7 +14,7 @@ const mockProducts = {
   },
   "cat-scratcher": {
     name: "Cat Scratcher",
-    image: "/images/products/cat-scratcher.jpg",
+    image: "/src/assets/images/cat-scratcher.jpg",
     price: "$15.00",
     description: "Durable scratcher for cats.",
     rating: 4.8,
@@ -25,7 +25,7 @@ const mockProducts = {
 const DetailProduct = () => {
   const { productId } = useParams();
   const product = mockProducts[productId];
-  const { addToCart } = useCart(); // dùng hàm từ context
+  const { addToCart } = useCart();  
   if (!product) {
     return <div className="text-center mt-20 text-red-500">Product not found</div>;
   }
@@ -48,7 +48,7 @@ const DetailProduct = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/images/banner/shop-banner.jpg"
+            src="/src/assets/images/pet-food-baner.jpg"
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
