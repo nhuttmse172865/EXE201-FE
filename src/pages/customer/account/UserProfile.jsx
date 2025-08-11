@@ -3,8 +3,9 @@ import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import BookingList from "../../../components/customer/account/BookingList";
 import ListChat from "../../../components/customer/account/ListChat";
-import ChatWindow from "../../../components/customer/account/ChatWindow";  
+import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
+import OrderDetail from "../../../components/customer/account/OrderDetail";  
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
@@ -18,9 +19,10 @@ const SidebarItem = ({ active, icon, label, onClick }) => (
 );
 
 const UserProfile = () => {
-  const [tab, setTab] = useState("booking"); // mặc định mở Booking
+  const [tab, setTab] = useState("booking");
   const [editing, setEditing] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(null); // ➜ state chọn cuộc trò chuyện
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);  
 
   const [form, setForm] = useState({
     fullName: "Nguyen Thanh Dat",
@@ -32,10 +34,24 @@ const UserProfile = () => {
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const onSave = () => {
-    setEditing(false);
-    alert("Profile saved!");
-  };
+const onSave = () => {
+  // Validate email
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(form.email)) {
+    alert("Vui lòng nhập đúng định dạng email.");
+    return;
+  }
+
+  // Validate phone 
+  const phonePattern = /^0\d{9}$/;
+  if (!phonePattern.test(form.phone)) {
+    alert("Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số.");
+    return;
+  }
+
+  setEditing(false);
+  alert("Profile saved!");
+};
 
   const onCancel = () => setEditing(false);
 
@@ -68,6 +84,7 @@ const UserProfile = () => {
                 onClick={() => {
                   setTab("profile");
                   setSelectedChat(null);
+                  setSelectedOrder(null);
                 }}
               />
               <SidebarItem
@@ -77,15 +94,28 @@ const UserProfile = () => {
                 onClick={() => {
                   setTab("booking");
                   setSelectedChat(null);
+                  setSelectedOrder(null);
                 }}
               />
               <SidebarItem
                 active={tab === "consult"}
                 icon="💬"
                 label="Consult"
-                onClick={() => setTab("consult")}
+                onClick={() => {
+                  setTab("consult");
+                  setSelectedOrder(null);
+                }}
               />
-               <SidebarItem active={tab === "orders"} icon="🧾" label="Order History" onClick={() => setTab("orders")} /> {/* NEW */}
+              <SidebarItem
+                active={tab === "orders"}
+                icon="🧾"
+                label="Order History"
+                onClick={() => {
+                  setTab("orders");
+                  setSelectedChat(null);
+ 
+                }}
+              />
               <div className="mt-6 text-xs text-gray-400 px-2">Help</div>
             </div>
           </aside>
@@ -190,18 +220,21 @@ const UserProfile = () => {
             {/* BOOKING */}
             {tab === "booking" && <BookingList />}
 
-            {/* CONSULT: danh sách ↔ hộp thoại */}
-            {tab === "consult" && (
-              selectedChat ? (
-                <ChatWindow
-                  chat={selectedChat}
-                  onBack={() => setSelectedChat(null)}
-                />
+            {/* CONSULT: */}
+            {tab === "consult" &&
+              (selectedChat ? (
+                <ChatWindow chat={selectedChat} onBack={() => setSelectedChat(null)} />
               ) : (
                 <ListChat onSelect={(chat) => setSelectedChat(chat)} />
-              )
-            )}
-                        {tab === "orders" && <OrderHistory />}
+              ))}
+
+            {/* ORDERS: list + detail */}
+            {tab === "orders" &&
+              (selectedOrder ? (
+                <OrderDetail order={selectedOrder} onBack={() => setSelectedOrder(null)} />
+              ) : (
+                <OrderHistory onSelect={(o) => setSelectedOrder(o)} />
+              ))}
           </section>
         </div>
       </div>
