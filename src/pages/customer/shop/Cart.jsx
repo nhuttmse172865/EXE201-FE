@@ -26,7 +26,7 @@ const Cart = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/images/banner/shop-banner.jpg"
+            src="/src/assets/images/cart-banner.jpg"
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />

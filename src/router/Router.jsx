@@ -21,6 +21,7 @@ import MessageCustomer from "../pages/doctor/MessageCustomer";
 import ShopPet  from "../pages/customer/shop/ShopPet"; 
 import DetailProduct from "../pages/customer/shop/DetailProduct";
 import Cart from "../pages/customer/shop/Cart";
+import UserProfile from "../pages/customer/account/UserProfile";
 
 const Router = () => {
   const generateRoutes = (routes) => {
@@ -52,8 +53,9 @@ const Router = () => {
       <Route path="/reportconsult-doctor" element={<ReportConsult />} />
       <Route path="/message-doctor" element={<MessageCustomer />} />
       <Route path="/shoppet" element={<ShopPet />} />
-<Route path="/product/:productId" element={<DetailProduct />} />
-<Route path="/cart" element={<Cart />} />
+      <Route path="/product/:productId" element={<DetailProduct />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/profile" element={<UserProfile />} />
     </Routes>
   );
 };

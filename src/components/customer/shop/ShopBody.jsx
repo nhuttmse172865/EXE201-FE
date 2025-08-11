@@ -5,7 +5,7 @@ const allProducts = [
   {
     slug: "amily-martins",
     name: "Amily Martins",
-    image: "/images/products/dog-hotel.jpg",
+    image: "/src/assets/images/dog-hotel.jpg",
     price: 25.0,
     description: "Lorem Ipsum is simply dummy",
     rating: 4.9,
@@ -13,7 +13,7 @@ const allProducts = [
   {
     slug: "cat-scratcher",
     name: "Cat Scratcher",
-    image: "/images/products/cat-scratcher.jpg",
+    image: "/src/assets/images/cat-scratcher.jpg",
     price: 14.0,
     description: "Durable scratcher for cats.",
     rating: 4.8,
@@ -21,7 +21,7 @@ const allProducts = [
   {
     slug: "pet-shampoo",
     name: "Pet Shampoo",
-    image: "/images/products/shampoo.jpg",
+    image: "/src/assets/images/shampoo.jpg",
     price: 10.0,
     description: "Gentle shampoo for pets.",
     rating: 4.7,
@@ -29,7 +29,7 @@ const allProducts = [
   {
     slug: "premium-cat-food",
     name: "Premium Cat Food",
-    image: "/images/products/cat-food.jpg",
+    image: "/src/assets/images/cat-food.jpg",
     price: 30.0,
     description: "Tasty and nutritious cat food.",
     rating: 4.6,
@@ -37,7 +37,7 @@ const allProducts = [
   {
     slug: "dog-collar",
     name: "Dog Collar",
-    image: "/images/products/collar.jpg",
+    image: "/src/assets/images/collar.jpg",
     price: 12.5,
     description: "Adjustable collar for dogs.",
     rating: 4.5,
@@ -70,7 +70,7 @@ const ShopBody = () => {
       {/* Banner */}
       <div className="mb-8">
         <img
-          src="/images/banner/shop-banner.jpg"
+          src="/src/assets/images/shop-banner.jpg"
           alt="Shop Banner"
           className="w-full h-[250px] object-cover rounded-2xl shadow-md"
         />
