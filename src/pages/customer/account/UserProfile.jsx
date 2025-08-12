@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import BookingList from "../../../components/customer/account/BookingList";
 import ListChat from "../../../components/customer/account/ListChat";
-import ChatWindow from "../../../components/customer/account/ChatWindow";  
+import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
+import axios from "axios";
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
@@ -23,21 +24,47 @@ const UserProfile = () => {
   const [selectedChat, setSelectedChat] = useState(null); // ➜ state chọn cuộc trò chuyện
 
   const [form, setForm] = useState({
-    fullName: "Nguyen Thanh Dat",
+    name: "Nguyen Thanh Dat",
     email: "a@gmail.com",
     phone: "0123456789",
     address: "30 xa lộ hà nội, tp HCM",
   });
 
-  console.log(form);
-  
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      // Fetch user profile data from API
+      const response = await axios.get("http://localhost:8080/account/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = response.data;
+      setForm(data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
 
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const onSave = () => {
+  const onSave = async () => {
     setEditing(false);
-    alert("Profile saved!");
+    try {
+      const response = await axios.put("http://localhost:8080/account/update", form);
+      const data = response.data;
+      setForm(data);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      alert("Failed to update profile.");
+      console.error("Failed to update profile:", error);
+    }
   };
 
   const onCancel = () => setEditing(false);
@@ -57,7 +84,7 @@ const UserProfile = () => {
         </div>
 
         <h1 className="text-2xl md:text-3xl font-semibold mb-6">
-          Welcome, <span className="text-pink-600">{form.fullName}</span>
+          Welcome, <span className="text-pink-600">{form.name}</span>
         </h1>
 
         <div className="grid grid-cols-12 gap-6">
@@ -88,7 +115,7 @@ const UserProfile = () => {
                 label="Consult"
                 onClick={() => setTab("consult")}
               />
-               <SidebarItem active={tab === "orders"} icon="🧾" label="Order History" onClick={() => setTab("orders")} /> {/* NEW */}
+              <SidebarItem active={tab === "orders"} icon="🧾" label="Order History" onClick={() => setTab("orders")} /> {/* NEW */}
               <div className="mt-6 text-xs text-gray-400 px-2">Help</div>
             </div>
           </aside>
@@ -108,7 +135,7 @@ const UserProfile = () => {
                       className="w-16 h-16 rounded-full border-4 border-white shadow"
                     />
                     <div className="pb-1">
-                      <div className="font-semibold">{form.fullName}</div>
+                      <div className="font-semibold">{form.name}</div>
                       <div className="text-sm text-gray-500">{form.email}</div>
                     </div>
                   </div>
@@ -123,8 +150,8 @@ const UserProfile = () => {
                     <div>
                       <label className="text-sm text-gray-500">Full Name</label>
                       <input
-                        name="fullName"
-                        value={form.fullName}
+                        name="name"
+                        value={form.name}
                         onChange={handleChange}
                         className="mt-1 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
                       />
@@ -204,7 +231,7 @@ const UserProfile = () => {
                 <ListChat onSelect={(chat) => setSelectedChat(chat)} />
               )
             )}
-                        {tab === "orders" && <OrderHistory />}
+            {tab === "orders" && <OrderHistory />}
           </section>
         </div>
       </div>
