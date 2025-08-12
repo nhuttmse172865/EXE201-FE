@@ -11,7 +11,7 @@ const ShopBody = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/product/available-list");      
+      const response = await axios.get(`${BASE.BASE_URL}/product/available-list`);      
       // Ensure that we are setting an array to the products state
       const productsData = Array.isArray(response.data)
         ? response.data

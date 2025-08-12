@@ -48,7 +48,7 @@ const LoginForm = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/account/signIn", {
+      const res = await fetch(`${BASE.BASE_URL}/account/signIn`, {
         method: "POST",
         credentials: "include",
         headers: {

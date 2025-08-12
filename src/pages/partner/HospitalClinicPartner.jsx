@@ -238,7 +238,7 @@ const HospitalClinicPartner = () => {
                 Clinic/Hospital Image
               </label>
               <img
-                src={`http://localhost:8080/abc.jpg`}
+                src={`${BASE.BASE_URL}/abc.jpg`}
                 alt="Clinic"
                 className="w-56 h-36 object-cover rounded-lg mb-2 border"
               />

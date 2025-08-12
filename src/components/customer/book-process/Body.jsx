@@ -2,7 +2,9 @@ import React from 'react'
 
 const Body = () => {
   return (
-    <div>Body</div>
+     <div className="min-h-[calc(100vh-70px)]">
+ 
+    </div>
   )
 }
 
