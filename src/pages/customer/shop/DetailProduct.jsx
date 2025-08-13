@@ -115,7 +115,7 @@ const DetailProduct = () => {
     setShowCheckout(false);
   };
 
-  return (
+    return (
     <div>
       <Header />
 

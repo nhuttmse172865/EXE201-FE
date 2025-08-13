@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
+import cartBanner from "../../../assets/images/cart-banner.jpg"; // Import the image
 
 const Cart = () => {
   const { cartItems, removeFromCart } = useCart();
@@ -82,8 +83,8 @@ const Cart = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/cart-banner.jpg"
-            alt="Shop Banner"
+            src={cartBanner} // Use the imported image
+            alt="Cart Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
         </div>
@@ -98,7 +99,7 @@ const Cart = () => {
                 className="flex items-center gap-4 border-b border-gray-300 border-dashed pb-4"
               >
                 <img
-                  src={item.image}
+                  src={item.image} // Ensure this path is correct
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />
@@ -111,8 +112,9 @@ const Cart = () => {
                   </p>
                   <p className="text-sm text-gray-500">{item.description}</p>
                 </div>
+                {/* Pass item.id to removeFromCart for reliable removal */}
                 <button
-                  onClick={() => removeFromCart(index)}
+                  onClick={() => removeFromCart(item.id)}
                   className="text-red-500 hover:underline text-sm"
                 >
                   Remove

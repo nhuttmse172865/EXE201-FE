@@ -1,69 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const allProducts = [
-  {
-    slug: "amily-martins",
-    name: "Amily Martins",
-    image: "/src/assets/images/dog-hotel.jpg",
-    price: 25.0,
-    description: "Lorem Ipsum is simply dummy",
-    rating: 4.9,
-  },
-  {
-    slug: "cat-scratcher",
-    name: "Cat Scratcher",
-    image: "/src/assets/images/cat-scratcher.jpg",
-    price: 14.0,
-    description: "Durable scratcher for cats.",
-    rating: 4.8,
-  },
-  {
-    slug: "pet-shampoo",
-    name: "Pet Shampoo",
-    image: "/src/assets/images/shampoo.jpg",
-    price: 10.0,
-    description: "Gentle shampoo for pets.",
-    rating: 4.7,
-  },
-  {
-    slug: "premium-cat-food",
-    name: "Premium Cat Food",
-    image: "/src/assets/images/cat-food.jpg",
-    price: 30.0,
-    description: "Tasty and nutritious cat food.",
-    rating: 4.6,
-  },
-  {
-    slug: "dog-collar",
-    name: "Dog Collar",
-    image: "/src/assets/images/collar.jpg",
-    price: 12.5,
-    description: "Adjustable collar for dogs.",
-    rating: 4.5,
-  },
-];
+import axios from "axios";
 
 const ShopBody = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/product/available-list");      
+      // Ensure that we are setting an array to the products state
+      const productsData = Array.isArray(response.data)
+        ? response.data
+        : response.data?.data || [];
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      setProducts([]); // Set to empty array on error to prevent crash
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState("All");
   const navigate = useNavigate();
+  
 
   const handleClick = (slug) => {
     navigate(`/product/${slug}`);
   };
 
-  const filteredProducts = allProducts.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProducts =
+    Array.isArray(products) &&
+    products.filter((product) => {
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    const matchesFilter =
-      priceFilter === "All" ||
-      (priceFilter === "<15" && product.price < 15) ||
-      (priceFilter === "15-25" && product.price >= 15 && product.price <= 25) ||
-      (priceFilter === ">25" && product.price > 25);
+      const matchesFilter =
+        priceFilter === "All" ||
+        (priceFilter === "<15" && product.price < 15) ||
+        (priceFilter === "15-25" &&
+          product.price >= 15 &&
+          product.price <= 25) ||
+        (priceFilter === ">25" && product.price > 25);
 
-    return matchesSearch && matchesFilter;
-  });
+      return matchesSearch && matchesFilter;
+    });
 
   return (
     <div className="container mx-auto px-4 py-10">
@@ -102,33 +87,38 @@ const ShopBody = () => {
 
       {/* Product Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {filteredProducts.map((product, index) => (
-          <div
-            key={index}
-            className="rounded-xl shadow-md cursor-pointer hover:shadow-lg transition"
-            onClick={() => handleClick(product.slug)}
-          >
-            <div className="relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-36 object-cover rounded-t-xl"
-              />
-              <div className="absolute top-2 right-2 bg-white text-yellow-500 px-2 py-1 rounded-md text-sm font-semibold shadow">
-                ⭐ {product.rating}
+        {filteredProducts &&
+          filteredProducts.map((product, index) => (
+            <div
+              key={index}
+              className="rounded-xl shadow-md cursor-pointer hover:shadow-lg transition"
+              onClick={() => handleClick(product.id)}
+            >
+              <div className="relative">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-36 object-cover rounded-t-xl"
+                />
+                <div className="absolute top-2 right-2 bg-white text-yellow-500 px-2 py-1 rounded-md text-sm font-semibold shadow">
+                  ⭐ {product.rating}
+                </div>
+              </div>
+
+              <div className="p-3">
+                <h2 className="text-base font-semibold">{product.name}</h2>
+                <p className="text-sm text-pink-600 font-bold">
+                  ${product.price.toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {product.description}
+                </p>
               </div>
             </div>
-
-            <div className="p-3">
-              <h2 className="text-base font-semibold">{product.name}</h2>
-              <p className="text-sm text-pink-600 font-bold">${product.price.toFixed(2)}</p>
-              <p className="text-xs text-gray-400 mt-1">{product.description}</p>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
 
-      {filteredProducts.length === 0 && (
+      {(!filteredProducts || filteredProducts.length === 0) && (
         <p className="text-center text-gray-500 mt-10">No products found.</p>
       )}
     </div>
