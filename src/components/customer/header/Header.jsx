@@ -7,7 +7,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { useCart } from "../../../contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 
-const Header = ({ border }) => {
+const Header = ({ border, isLogo = true }) => {
   const headerSectionRef = useRef(null);
   const inView = useIsInViewport(headerSectionRef, { threshold: 0.1 });
 
@@ -29,14 +29,13 @@ const Header = ({ border }) => {
 
   return (
     <div
-      className={`mx-auto container w-full h-[70px] flex justify-between items-center relative z-50 morph-in-item ${
-        inView ? "morph-in-active" : ""
-      }`}
+      className={`mx-auto container w-full h-[70px] flex justify-between items-center relative z-50 morph-in-item ${inView ? "morph-in-active" : ""
+        }`}
       ref={headerSectionRef}
     >
       <WebInfor />
-      <Logo border={border} />
-
+      {isLogo && <Logo border={border} />
+      }
       <div className="flex items-center gap-4">
         {/* Giỏ hàng */}
         <Link
@@ -51,27 +50,27 @@ const Header = ({ border }) => {
           )}
         </Link>
 
-{/* login/register */}
-{!isLogin ? (
-  <CustomerUtils />
-) : (
-  // Icon profile + Logout Dropdown
-  <div className="relative group">
-    <Link
-      to="/profile"
-      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl block"
-      title="My Profile"
-    >
-      👤
-    </Link>
-    <div
-      className="absolute right-0 top-full mt-2 hidden group-hover:block bg-white border rounded shadow px-4 py-2 cursor-pointer whitespace-nowrap z-50"
-      onClick={handleLogout}
-    >
-      Logout
-    </div>
-  </div>
-)}
+        {/* login/register */}
+        {!isLogin ? (
+          <CustomerUtils />
+        ) : (
+          // Icon profile + Logout Dropdown
+          <div className="relative group">
+            <Link
+              to="/profile"
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl block"
+              title="My Profile"
+            >
+              👤
+            </Link>
+            <div
+              className="absolute right-0 top-full mt-2 hidden group-hover:block bg-white border rounded shadow px-4 py-2 cursor-pointer whitespace-nowrap z-50"
+              onClick={handleLogout}
+            >
+              Logout
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

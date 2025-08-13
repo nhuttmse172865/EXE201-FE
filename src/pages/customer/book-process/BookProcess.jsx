@@ -6,7 +6,7 @@ import Footer from '../../../components/customer/footer/Footer'
 const BookProcess = () => {
   return (
     <div>
-        <Header />
+        <Header isLogo={false} />
         <Body />
         <Footer />
     </div>

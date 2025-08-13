@@ -5,7 +5,7 @@ import { CartProvider } from "./contexts/CartContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CartProvider> {/* bọc App */}
+    <CartProvider>
       <App />
     </CartProvider>
   </StrictMode>
