@@ -60,6 +60,11 @@ select:focus,
 textarea:focus {
   border-color: var(--color-primary-100);
 }
+.placeholder-13::placeholder{
+   font-size: 13px;
+  color: var(--color-title-40);
+  font-family: "Poppins";
+}
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
