@@ -22,6 +22,7 @@ import ShopPet  from "../pages/customer/shop/ShopPet";
 import DetailProduct from "../pages/customer/shop/DetailProduct";
 import Cart from "../pages/customer/shop/Cart";
 import UserProfile from "../pages/customer/account/UserProfile";
+import LoginPrivate from "../pages/LoginPrivate/LoginPrivate";
 
 const Router = () => {
   const generateRoutes = (routes) => {
@@ -56,6 +57,7 @@ const Router = () => {
       <Route path="/product/:id" element={<DetailProduct />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/profile" element={<UserProfile />} />
+      <Route path="/loginprivate" element={<LoginPrivate />} />
     </Routes>
   );
 };
