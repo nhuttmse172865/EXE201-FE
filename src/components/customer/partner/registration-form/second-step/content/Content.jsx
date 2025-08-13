@@ -3,8 +3,9 @@ import InputText from "../../../../../common/input/InputText";
 import IMAGES from "../../../../../../utils/images";
 import OutlineButton from "../../../../../common/button/outline-button/OutlineButton";
 import ElevatedButton from "../../../../../common/button/elevated-button/ElevatedButton";
-
+import { useNavigate } from "react-router-dom";
 const Content = ({ setCurrentStep, formData, setFormData }) => {
+  const navigate = useNavigate();
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -73,7 +74,7 @@ const Content = ({ setCurrentStep, formData, setFormData }) => {
             </label>
             <input
               type="text"
-              className="h-[48px] border-[1px] border-(--color-title-20) rounded-[.375rem] text-(--color-title-100) text-[15px] max-w-[550px]"
+className="h-[48px] border-[1px] border-(--color-title-20) rounded-[.375rem] text-(--color-title-100) text-[15px] max-w-[550px]"
               placeholder=""
             />
           </div> */}
@@ -133,7 +134,7 @@ const Content = ({ setCurrentStep, formData, setFormData }) => {
                     <img src={IMAGES.uploadFile} className="w-[25px]" />
                     <h5 className="text-[14px] text-[rgba(0,0,0,0.6)]">
                       Drop file or{" "}
-                      <span className="text-(--color-primary-100) font-medium">
+<span className="text-(--color-primary-100) font-medium">
                         browse
                       </span>
                     </h5>
