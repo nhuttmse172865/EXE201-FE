@@ -4,7 +4,7 @@ import Clinic from "./clinic/Clinic";
 
 const SelectClinic = () => {
   return (
-    <div>
+    <div className="p-[15px] bg-white rounded-[.375rem]">
       <div className="flex justify-between">
         <div className="flex gap-2.5 items-center">
           <div className="w-[2px] bg-(--color-primary-100) h-[20px]"></div>
