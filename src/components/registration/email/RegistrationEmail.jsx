@@ -10,7 +10,7 @@ const RegistrationEmail = () => {
   const navigate = useNavigate();
   const handleSignup = async () => {
     try {
-      const res = await fetch("http://localhost:8080/account/registerAccount", {
+      const res = await fetch(`${BASE.BASE_URL}/account/registerAccount`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

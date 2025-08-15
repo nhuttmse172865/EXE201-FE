@@ -34,7 +34,7 @@ const Content = ({ setCurrentStep, formData, setFormData }) => {
         formDataToSend.append("image", formData.businessLicense); // File ảnh từ input
       }
 
-      const response = await fetch("http://localhost:8080/api/hospitals", {
+      const response = await fetch(`${BASE.BASE_URL}/api/hospitals`, {
         method: "POST",
         body: formDataToSend, // Không set Content-Type, fetch sẽ tự set
       });

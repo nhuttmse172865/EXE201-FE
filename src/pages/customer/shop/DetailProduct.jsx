@@ -16,7 +16,7 @@ const DetailProduct = () => {
         const fetchProduct = async () => {
             try {
                 // Replace with your actual API endpoint
-                const response = await axios.get(`http://localhost:8080/product/${id}`);
+                const response = await axios.get(`${BASE.BASE_URL}/product/${id}`);
                 setProduct(response.data);
             } catch (err) {
                 setError('Failed to fetch product details.');

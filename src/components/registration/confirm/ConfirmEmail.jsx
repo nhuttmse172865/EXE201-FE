@@ -15,7 +15,7 @@ const ConfirmEmail = () => {
   const handleVerify = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8080/account/signUp?code=${otp}`,
+        `${BASE.BASE_URL}/account/signUp?code=${otp}`,
         {
           method: "POST",
           credentials: "include", // cần thiết để giữ session
