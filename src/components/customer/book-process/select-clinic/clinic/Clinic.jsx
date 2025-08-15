@@ -1,9 +1,26 @@
 import React from "react";
 import IMAGES from "../../../../../utils/images";
+import useLocalStorage from "use-local-storage";
 
-const Clinic = () => {
+const Clinic = ({
+  item,
+  setClinicActive,
+  clinicActive,
+  setBooking,
+  booking,
+}) => {
+  const handleOnClickItem = () => {
+    setClinicActive(item);
+    setBooking({ service: booking.service, clinic: item });
+  };
+
   return (
-    <div class="group hover:scale-105 cursor-pointer duration-300 ease-in-out">
+    <div
+      class={`group hover:scale-105 cursor-pointer duration-300 ease-in-out ${
+        clinicActive === item ? "scale-105" : null
+      }`}
+      onClick={() => handleOnClickItem()}
+    >
       <div class="bg-[rgba(0,0,0,0.1)] h-[170px] rounded-[16px] relative overflow-hidden">
         {/* <img
           alt=""
@@ -19,12 +36,22 @@ const Clinic = () => {
       </div>
       <div class="mt-2 flex justify-between">
         <div class="py-1.5">
-          <h3 class=" text-[13px] font-medium text-[rgba(0,0,0,0.7)] group-hover:text-[rgba(0,0,0,0.8)] ">
-            Amalfi Coast
+          <h3
+            class={` text-[13px] font-medium   ${
+              clinicActive === item
+                ? "text-(--color-primary-100)"
+                : "text-[rgba(0,0,0,0.7)] group-hover:text-[rgba(0,0,0,0.8)]"
+            }`}
+          >
+            {item?.name}
           </h3>
           <div class="flex items-center mt-1 gap-2">
-            <img alt="location" class="w-[15px] h-[15px]" src={IMAGES.location} />
-            <p class="text-[12px] text-[rgba(0,0,0,0.5)]">District 2, HCM</p>
+            <img
+              alt="location"
+              class="w-[15px] h-[15px]"
+              src={IMAGES.location}
+            />
+            <p class="text-[12px] text-[rgba(0,0,0,0.5)]"> {item?.address}</p>
           </div>
         </div>
         <div class="flex items-center pr-2">
