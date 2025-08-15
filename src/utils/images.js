@@ -12,6 +12,9 @@ import arrowDown from "../assets/images/arrow-down.png"
 import clinicSample from "../assets/images/clinic-sample.jpg"
 import uploadFile from "../assets/images/upload-file.png"
 import search from "../assets/images/search.png"
+import momo from "../assets/images/momo.png"
+import vnpay from "../assets/images/vnpay.jpg"
+import zalopay from "../assets/images/zalopay.png"
 
 const IMAGES = {
   logo,
@@ -27,7 +30,10 @@ const IMAGES = {
   arrowDown,
   clinicSample,
   uploadFile,
-  search
+  search,
+  momo,
+  vnpay,
+  zalopay
 };
 
 export default IMAGES;

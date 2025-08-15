@@ -68,9 +68,9 @@ const DetailProduct = () => {
         {/* Product detail */}
         <div className="flex flex-col md:flex-row gap-8">
           <img
-            src={product.image}
+            src={product.imageUrl}
             alt={product.name}
-            className="w-full md:w-1/2 h-96 object-cover rounded-lg shadow"
+            className="w-full md:w-1/2 h-96 object-fit rounded-lg shadow"
           />
           <div className="md:w-1/2">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
