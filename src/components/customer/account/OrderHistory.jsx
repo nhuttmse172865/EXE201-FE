@@ -1,7 +1,6 @@
 import React from "react";
 
-// mock data – bạn có thể thay bằng API sau này
-const ORDERS = [
+export const ORDERS = [
   {
     id: "ORD-20250318-001",
     date: "18/03/2025",
@@ -28,16 +27,23 @@ const ORDERS = [
   },
 ];
 
-const STATUS_STYLES = {
-  Paid:     "bg-green-100 text-green-700",
-  Pending:  "bg-yellow-100 text-yellow-700",
+export const STATUS_STYLES = {
+  Paid: "bg-green-100 text-green-700",
+  Pending: "bg-yellow-100 text-yellow-700",
   Refunded: "bg-blue-100 text-blue-700",
-  Cancelled:"bg-red-100 text-red-700",
+  Cancelled: "bg-red-100 text-red-700",
 };
 
 const currency = (n) => `$${Number(n).toFixed(2)}`;
 
-const OrderHistory = () => {
+const OrderHistory = ({ onSelect }) => {
+  const handleKey = (e, o) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect?.(o);
+    }
+  };
+
   return (
     <div className="rounded-2xl overflow-hidden border border-gray-200">
       {/* Header bảng */}
@@ -54,9 +60,15 @@ const OrderHistory = () => {
         {ORDERS.map((o, idx) => (
           <div
             key={o.id}
-            className={`grid grid-cols-12 items-center px-5 py-4 text-sm ${
-              idx ? "border-t border-gray-200" : ""
-            }`}
+            role="button"
+            tabIndex={0}
+            onClick={() => onSelect?.(o)}
+            onKeyDown={(e) => handleKey(e, o)}
+            className={`grid grid-cols-12 items-center px-5 py-4 text-sm cursor-pointer
+              hover:bg-gray-50 focus:bg-gray-50 focus:outline-none ${
+                idx ? "border-t border-gray-200" : ""
+              }`}
+            aria-label={`Open order ${o.id}`}
           >
             {/* Order & brief items */}
             <div className="col-span-4">
@@ -71,7 +83,11 @@ const OrderHistory = () => {
             <div className="col-span-2 text-gray-700">{currency(o.total)}</div>
 
             <div className="col-span-2 flex items-center justify-end">
-              <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${STATUS_STYLES[o.status] || "bg-gray-100 text-gray-700"}`}>
+              <span
+                className={`px-2.5 py-1 rounded-md text-xs font-medium ${
+                  STATUS_STYLES[o.status] || "bg-gray-100 text-gray-700"
+                }`}
+              >
                 {o.status}
               </span>
             </div>

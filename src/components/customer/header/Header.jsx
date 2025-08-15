@@ -16,7 +16,7 @@ const Header = ({ border, isLogo = true }) => {
 
   // Trạng thái login
   const [isLogin, setIsLogin] = useState(false);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     setIsLogin(localStorage.getItem("isLoggedIn") === "true");
   }, []);
@@ -50,25 +50,34 @@ const Header = ({ border, isLogo = true }) => {
           )}
         </Link>
 
-        {/* login/register */}
+{/* login/register */}
         {!isLogin ? (
           <CustomerUtils />
         ) : (
-          // Icon profile + Logout Dropdown
-          <div className="relative group">
-            <Link
-              to="/profile"
-              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl block"
+          // Profile + dropdown
+          <div
+            className="relative"
+            onMouseEnter={() => setMenuOpen(true)}
+            onMouseLeave={() => setMenuOpen(false)}
+          >
+            <button
+              type="button"
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl"
               title="My Profile"
+              onClick={() => setMenuOpen((s) => !s)} // click để mở/đóng
             >
               👤
-            </Link>
-            <div
-              className="absolute right-0 top-full mt-2 hidden group-hover:block bg-white border rounded shadow px-4 py-2 cursor-pointer whitespace-nowrap z-50"
-              onClick={handleLogout}
-            >
-              Logout
-            </div>
+            </button>
+
+            {menuOpen && (
+              <div
+                className="absolute right-0 top-full bg-white border rounded shadow px-4 py-2 cursor-pointer whitespace-nowrap z-50"
+                // KHÔNG để mt-2 để tránh tạo khe hở
+                onClick={handleLogout}
+              >
+                Logout
+              </div>
+            )}
           </div>
         )}
       </div>

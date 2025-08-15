@@ -106,7 +106,7 @@ const HospitalClinicPartner = () => {
             <FaHandshake /> Service
           </Link>
           <Link
-            to="/doctor-partner"
+           to="/doctor-partner"
             className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
               location.pathname === "/doctor-partner"
                 ? "text-pink-500 font-semibold bg-pink-100"
@@ -133,27 +133,28 @@ const HospitalClinicPartner = () => {
 
       {/* Main content */}
       <main className="flex-1 p-8 ml-60">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
-          <p className="text-2xl font-bold">Hospital/Clinic</p>
-          <div className="flex items-center gap-4">
-            <FaSearch className="text-gray-500" />
-            <FaBell className="text-gray-500" />
-            <div className="flex items-center gap-2">
-              <img
-                src="https://i.pravatar.cc/40"
-                alt="avatar"
-                className="w-8 h-8 rounded-full"
-              />
-              <div>
-                <p className="text-sm font-bold">Tran Minh Nhut</p>
-                <p className="text-xs text-gray-500">
-                  nhutminhsondesign@gmail.com
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+          {/* Header */}
+                <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
+                  <p className="text-2xl font-bold">Hospital/Clinic</p>
+                  <div className="flex items-center gap-4">
+                    <FaSearch className="text-gray-500" />
+                    <FaBell className="text-gray-500" />
+                    <div className="flex items-center gap-2">
+                      <img
+                        src="https://i.pravatar.cc/40"
+                        alt="avatar"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div>
+                        <p className="text-sm font-bold">Tran Minh Nhut</p>
+                        <p className="text-xs text-gray-500">
+                          nhutminhsondesign@gmail.com
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
         <div className="bg-white rounded-2xl shadow-md p-6">
           <h2 className="text-lg font-semibold mb-6">
             Hospital/Clinic Information
@@ -176,7 +177,9 @@ const HospitalClinicPartner = () => {
                     value={editedData[field]}
                     readOnly={editField !== field}
                     onFocus={() => setEditField(field)}
-                    onChange={(e) => handleInputChange(field, e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(field, e.target.value)
+                    }
                     className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm bg-white"
                   />
                 </div>
@@ -209,6 +212,7 @@ const HospitalClinicPartner = () => {
                       onFocus={() => setEditField("to")}
                       className="border border-gray-300 rounded-md px-2 py-1 text-sm"
                     />
+                    
                   </div>
                 </div>
               </div>
@@ -238,7 +242,7 @@ const HospitalClinicPartner = () => {
                 Clinic/Hospital Image
               </label>
               <img
-                src={`${BASE.BASE_URL}/abc.jpg`}
+                src={previewImage}
                 alt="Clinic"
                 className="w-56 h-36 object-cover rounded-lg mb-2 border"
               />
