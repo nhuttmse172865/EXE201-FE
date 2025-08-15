@@ -23,7 +23,7 @@ import DetailProduct from "../pages/customer/shop/DetailProduct";
 import Cart from "../pages/customer/shop/Cart";
 import UserProfile from "../pages/customer/account/UserProfile";
 import LoginPrivate from "../pages/LoginPrivate/LoginPrivate";
-
+import ThankYou from "../pages/thankyou/ThankYou";
 const Router = () => {
   const generateRoutes = (routes) => {
     return routes.map((route, index) => (
@@ -58,6 +58,7 @@ const Router = () => {
       <Route path="/cart" element={<Cart />} />
       <Route path="/profile" element={<UserProfile />} />
       <Route path="/loginprivate" element={<LoginPrivate />} />
+        <Route path="/checkout/result" element={<ThankYou />} />
     </Routes>
   );
 };

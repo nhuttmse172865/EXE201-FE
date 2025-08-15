@@ -1,4 +1,3 @@
-// src/utils/jwtHelper.js
 export function getRoleFromToken(token) {
   try {
     const payload = JSON.parse(atob(token.split(".")[1] || ""));

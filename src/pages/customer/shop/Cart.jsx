@@ -2,11 +2,25 @@ import React, { useEffect, useMemo, useState } from "react";
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
-import cartBanner from "../../../assets/images/cart-banner.jpg"; // Import the image
+import cartBanner from "../../../assets/images/cart-banner.jpg";  
+
+async function createMomoPayment() {
+  const res = await fetch("http://localhost:8080/payment", {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("Payment API error");
+  const data = await res.json();
+  if (data.resultCode !== 0 || !data.payUrl) {
+    throw new Error(data.message || "Không lấy được payUrl");
+  }
+  return data; // { payUrl, orderId, amount, ... }
+}
 
 const Cart = () => {
   const { cartItems, removeFromCart } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -65,16 +79,36 @@ const Cart = () => {
     return err;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const err = validate();
-    setErrors(err);
-    if (Object.keys(err).length) return;
-    alert(
-      `Đặt hàng thành công!\nTổng: ${currency(total)}\nThanh toán: ${form.paymentMethod.toUpperCase()}`
-    );
-    closeModal();
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (submitting) return; 
+  const err = validate();
+  setErrors(err);
+  if (Object.keys(err).length) return;
+
+  try {
+    setSubmitting(true);
+
+    if (form.paymentMethod === "cod") {
+ 
+      alert(
+        `Order successful!\nTotal: ${currency(total)}\nPay: ${form.paymentMethod.toUpperCase()}`
+      );
+      closeModal();
+    } else {
+ 
+      const data = await createMomoPayment();
+ 
+      localStorage.setItem("lastOrderId", data.orderId || "");
+      window.location.href = data.payUrl; // đi tới cổng MoMo
+    }
+  } catch (e) {
+    console.error(e);
+    alert(e.message || "Unable to initiate payment. Please try again.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div>
@@ -99,7 +133,7 @@ const Cart = () => {
                 className="flex items-center gap-4 border-b border-gray-300 border-dashed pb-4"
               >
                 <img
-                  src={item.image} // Ensure this path is correct
+                  src={item.image}  
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />
@@ -112,7 +146,7 @@ const Cart = () => {
                   </p>
                   <p className="text-sm text-gray-500">{item.description}</p>
                 </div>
-                {/* Pass item.id to removeFromCart for reliable removal */}
+ 
                 <button
                   onClick={() => removeFromCart(item.id)}
                   className="text-red-500 hover:underline text-sm"
@@ -250,12 +284,13 @@ const Cart = () => {
                 <div className="text-sm text-gray-600">
                   Tổng thanh toán: <b>{currency(total)}</b>
                 </div>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95"
-                >
-                  Xác nhận đặt hàng
-                </button>
+<button
+  type="submit"
+  disabled={submitting}
+  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95 disabled:opacity-60"
+>
+  {submitting ? "processing..." : "Order confirmation"}
+</button>
               </div>
             </form>
           </div>
