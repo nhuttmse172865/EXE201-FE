@@ -2,28 +2,45 @@ import React, { useState } from "react";
 import ProgressBar from "./progress-bar/ProgressBar";
 import BookInformation from "./book-infor/BookInformation";
 import PROGRESS_BOOKING from "../../../utils/progress-booking";
+import useLocalStorage from "use-local-storage";
 
 const Body = () => {
   const [currentBookingStep, setCurrentBookingStep] = useState(
     PROGRESS_BOOKING[0]
   );
+  const [booking, setBooking] = useLocalStorage("booking", "");
   const handleNextStep = () => {
     const currentIndex = PROGRESS_BOOKING.findIndex(
       (step) => step.id === currentBookingStep.id
     );
+    if (
+      currentIndex === 0 &&
+      (booking.service === null || booking.service === undefined)
+    )
+      return;
+
+    if (
+      currentIndex === 1 &&
+      (booking.clinic === null || booking.clinic === undefined)
+    )
+      return;
+
     if (currentIndex < PROGRESS_BOOKING.length - 1) {
       setCurrentBookingStep(PROGRESS_BOOKING[currentIndex + 1]);
     }
   };
 
   const handlePreviousStep = () => {
-     const currentIndex = PROGRESS_BOOKING.findIndex(
+    const currentIndex = PROGRESS_BOOKING.findIndex(
       (step) => step.id === currentBookingStep.id
     );
+    if (currentIndex === 1) {
+      setBooking({ service: booking.service });
+    }
     if (currentIndex > 0) {
       setCurrentBookingStep(PROGRESS_BOOKING[currentIndex - 1]);
     }
-  }
+  };
   return (
     <div className="min-h-[calc(100vh-70px)]">
       <div className="w-full h-[3px] bg-[#F7F7F7]"></div>
@@ -34,7 +51,10 @@ const Body = () => {
             {currentBookingStep.component}
           </div>
           <div className=" w-[25%] rounded-[.375rem]">
-            <BookInformation handleNextStep={handleNextStep} handlePreviousStep={handlePreviousStep} />
+            <BookInformation
+              handleNextStep={handleNextStep}
+              handlePreviousStep={handlePreviousStep}
+            />
           </div>
         </div>
       </div>

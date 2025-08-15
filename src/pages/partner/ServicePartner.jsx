@@ -159,7 +159,7 @@ const ServicePartner = () => {
     };
 
     // ---- THAY đổi API_URL và cách lấy token nếu cần ----
-    const API_URL = "http://localhost:5000/api/services"; // <- đổi thành API của bạn
+    const API_URL = `${BASE.BASE_URL}/api/services`; // <- đổi thành API của bạn
     const token = sessionStorage.getItem("token"); // hoặc lấy từ prop/context
     console.log(JSON.stringify(payload));
     // try {

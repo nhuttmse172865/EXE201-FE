@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IMAGES from "../../../../utils/images";
 import Clinic from "./clinic/Clinic";
+import axios from "axios";
+import BASE from "../../../../utils/base";
+import useLocalStorage from "use-local-storage";
 
 const SelectClinic = () => {
+  const [clinics, setClinics] = useState([]);
+  const [booking, setBooking] = useLocalStorage("booking", "");
+  const [clinicActive,setClinicActive] = useState()
+  const handleFetchClinicsData = async () => {
+    const serviceID = booking?.service.id;
+    try {
+      const res = await axios.get(
+        `${BASE.BASE_URL}/api/hospitals/service/${serviceID}`
+      );
+      setClinics(res.data);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    handleFetchClinicsData();
+  }, []);
   return (
     <div className="p-[15px] bg-white rounded-[.375rem]">
       <div className="flex justify-between">
@@ -26,17 +44,17 @@ const SelectClinic = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-6 mt-10">
-        {Array.from({ length: 8 }).map((item) => (
-          <Clinic />
+        {clinics?.map((item) => (
+          <Clinic item={item} setClinicActive={setClinicActive} booking={booking} clinicActive={clinicActive} setBooking={setBooking} />
         ))}
       </div>
-      <div className="mt-10 mb-5 flex justify-center gap-2.5">
+      {/* <div className="mt-10 mb-5 flex justify-center gap-2.5">
         {Array.from({ length: 5 }).map((item, index) => (
           <div className="w-[25px] h-[25px] bg-(--color-primary-100) rounded-[.375rem] text-[13px] flex justify-center items-center text-white">
             {index + 1}
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
