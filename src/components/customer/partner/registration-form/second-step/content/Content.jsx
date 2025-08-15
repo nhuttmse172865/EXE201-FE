@@ -40,7 +40,7 @@ const Content = ({ setCurrentStep, formData, setFormData }) => {
       });
 
       if (response.ok) {
-        navigate("/loginprivate");
+        navigate("/dashboard-partner");
       } else {
         alert("Failed to send form.");
       }
