@@ -96,9 +96,9 @@ const ShopBody = () => {
             >
               <div className="relative">
                 <img
-                  src={product.image}
+                  src={product.imageUrl}
                   alt={product.name}
-                  className="w-full h-36 object-cover rounded-t-xl"
+                  className="w-full h-36 object-fit rounded-t-xl"
                 />
                 <div className="absolute top-2 right-2 bg-white text-yellow-500 px-2 py-1 rounded-md text-sm font-semibold shadow">
                   ⭐ {product.rating}
