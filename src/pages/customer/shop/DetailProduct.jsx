@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; 
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
@@ -21,11 +21,10 @@ async function createMomoPayment() {
 const DetailProduct = () => {
   const { productId } = useParams();
   const { addToCart } = useCart();
-
+  const navigate = useNavigate(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [qty, setQty] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -84,7 +83,15 @@ const DetailProduct = () => {
   };
 
   // mở modal checkout
-  const buyNow = () => setShowCheckout(true);
+  const buyNow = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; 
+    if (!isLoggedIn) {
+      alert("Bạn cần đăng nhập để mua hàng!");
+      navigate("/login");  
+      return;
+    }
+    setShowCheckout(true);  
+  };
 
   // +/- quantity
   const dec = () => setQty((q) => Math.max(1, q - 1));

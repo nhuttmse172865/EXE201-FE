@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Header from "../../../components/customer/header/Header";
+import { useNavigate } from "react-router-dom";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import cartBanner from "../../../assets/images/cart-banner.jpg";  
@@ -21,7 +22,7 @@ const Cart = () => {
   const { cartItems, removeFromCart } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
+  const navigate = useNavigate(); 
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -45,7 +46,15 @@ const Cart = () => {
     Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
 
   // mở/đóng modal
-  const openModal = () => setShowCheckout(true);
+  const openModal = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; 
+    if (!isLoggedIn) {
+      alert("Bạn cần đăng nhập để thanh toán!");
+      navigate("/login");  
+      return;
+    }
+    setShowCheckout(true);
+  };
   const closeModal = () => setShowCheckout(false);
 
   // ESC để đóng
@@ -100,7 +109,7 @@ const handleSubmit = async (e) => {
       const data = await createMomoPayment();
  
       localStorage.setItem("lastOrderId", data.orderId || "");
-      window.location.href = data.payUrl; // đi tới cổng MoMo
+      window.location.href = data.payUrl;  
     }
   } catch (e) {
     console.error(e);
