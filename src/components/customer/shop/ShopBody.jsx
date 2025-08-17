@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import BASE from "../../../utils/base";
 
 const ShopBody = () => {
   const [products, setProducts] = useState([]);
