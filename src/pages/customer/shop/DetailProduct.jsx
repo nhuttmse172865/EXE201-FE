@@ -5,6 +5,18 @@ import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 
+async function createMomoPayment() {
+  const res = await fetch("http://localhost:8080/payment", {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error("Payment API error");
+  const data = await res.json();
+  if (data.resultCode !== 0 || !data.payUrl) {
+    throw new Error(data.message || "Không lấy được payUrl");
+  }
+  return data; // { payUrl, orderId, amount, ... }
+}
 
 const DetailProduct = () => {
   const { productId } = useParams();
@@ -16,6 +28,7 @@ const DetailProduct = () => {
 
   const [qty, setQty] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -29,6 +42,7 @@ const DetailProduct = () => {
   });
   const [errors, setErrors] = useState({});
 
+ 
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -43,6 +57,7 @@ const DetailProduct = () => {
       });
   }, [productId]);
 
+  // util
   const parsePrice = (p) =>
     typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
 
@@ -51,37 +66,31 @@ const DetailProduct = () => {
   const currency = (n) =>
     Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
 
+  // ESC để đóng modal
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setShowCheckout(false);
     if (showCheckout) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showCheckout]);
 
-  if (loading) {
-    return <div className="text-center mt-20 text-gray-500">Loading product...</div>;
-  }
-  if (error) {
-    return <div className="text-center mt-20 text-red-500">{error}</div>;
-  }
-  if (!product) {
-    return <div className="text-center mt-20 text-red-500">Product not found</div>;
-  }
+  if (loading) return <div className="text-center mt-20 text-gray-500">Loading product...</div>;
+  if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
+  if (!product) return <div className="text-center mt-20 text-red-500">Product not found</div>;
 
-  // 
+  // add to cart
   const handleAddToCart = () => {
     addToCart({ ...product, qty, price: unitPrice });
     alert("Product added to cart!");
   };
 
-  //  
-  const buyNow = () => {
-    setShowCheckout(true);
-  };
+  // mở modal checkout
+  const buyNow = () => setShowCheckout(true);
 
-  // Nút +/-  
+  // +/- quantity
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(99, q + 1));
 
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -95,7 +104,8 @@ const DetailProduct = () => {
   const validate = () => {
     const err = {};
     if (!form.fullName.trim()) err.fullName = "Vui lòng nhập họ tên.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) err.email = "Email không hợp lệ.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      err.email = "Email không hợp lệ.";
     if (!/^0\d{9}$/.test(form.phone))
       err.phone = "SĐT phải bắt đầu bằng 0 và gồm 10 số.";
     if (!form.address.trim()) err.address = "Vui lòng nhập địa chỉ.";
@@ -104,22 +114,39 @@ const DetailProduct = () => {
     return err;
   };
 
-  const submitCheckout = (e) => {
+ 
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
     const err = validate();
     setErrors(err);
     if (Object.keys(err).length) return;
 
-    //  
-    alert(
-      `Đặt hàng thành công!\nSản phẩm: ${product.name} x${qty}\nTổng: ${currency(
-        total
-      )}\nThanh toán: ${form.paymentMethod.toUpperCase()}`
-    );
-    setShowCheckout(false);
+    try {
+      setSubmitting(true);
+
+      if (form.paymentMethod === "cod") {
+        alert(
+          `Order successful!\nProduct: ${product.name} x${qty}\nTotal: ${currency(
+            total
+          )}\nPay: ${form.paymentMethod.toUpperCase()}`
+        );
+        setShowCheckout(false);
+      } else {
+        const data = await createMomoPayment();
+        localStorage.setItem("lastOrderId", data.orderId || "");
+        window.location.href = data.payUrl; // chuyển sang cổng MoMo
+      }
+    } catch (e2) {
+      console.error(e2);
+      alert(e2.message || "Unable to initiate payment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-    return (
+  return (
     <div>
       <Header />
 
@@ -145,51 +172,50 @@ const DetailProduct = () => {
             <p className="text-xl text-pink-600 font-semibold mb-2">
               {typeof product.price === "number" ? currency(product.price) : product.price}
             </p>
-            <p className="text-sm text-yellow-600 mb-2">⭐ {product.rating} / 5</p>
-            <p className="mb-4 text-gray-700">{product.details}</p>
+            {!!product.rating && (
+              <p className="text-sm text-yellow-600 mb-2">⭐ {product.rating} / 5</p>
+            )}
+            {!!product.details && <p className="mb-4 text-gray-700">{product.details}</p>}
 
             {/* Quantity +/- */}
-<div className="flex items-center gap-4 mb-4">
-  <label className="text-sm text-gray-600">Quantity</label>
+            <div className="flex items-center gap-4 mb-4">
+              <label className="text-sm text-gray-600">Quantity</label>
 
-  <div className="flex items-center h-10 rounded-md border border-gray-200 overflow-hidden">
-    <button
-      type="button"
-      onClick={dec}
-      disabled={qty <= 1}
-      className="px-3 h-full text-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-      aria-label="Decrease quantity"
-    >
-      −
-    </button>
+              <div className="flex items-center h-10 rounded-md border border-gray-200 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={dec}
+                  disabled={qty <= 1}
+                  className="px-3 h-full text-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
 
-    {/* kẻ dọc */}
-    <div className="w-px self-stretch bg-gray-200" />
+                <div className="w-px self-stretch bg-gray-200" />
 
-    {/* cột số lượng */}
-    <div className="w-12 h-full grid place-items-center select-none">
-      {qty}
-    </div>
+                <div className="w-12 h-full grid place-items-center select-none">
+                  {qty}
+                </div>
 
-    {/* kẻ dọc */}
-    <div className="w-px self-stretch bg-gray-200" />
-    <button
-      type="button"
-      onClick={inc}
-      disabled={qty >= 99}
-      className="px-3 h-full text-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-      aria-label="Increase quantity"
-    >
-      +
-    </button>
-  </div>
+                <div className="w-px self-stretch bg-gray-200" />
+                <button
+                  type="button"
+                  onClick={inc}
+                  disabled={qty >= 99}
+                  className="px-3 h-full text-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
 
-  <span className="text-sm text-gray-600">
-    Total: <b>{currency(total)}</b>
-  </span>
-</div>
+              <span className="text-sm text-gray-600">
+                Total: <b>{currency(total)}</b>
+              </span>
+            </div>
 
-<br/>
+            <br />
             <div className="flex gap-4">
               <button
                 onClick={handleAddToCart}
@@ -230,7 +256,7 @@ const DetailProduct = () => {
               </button>
             </div>
 
-            <form onSubmit={submitCheckout} className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field
                 label="Họ và tên"
                 name="fullName"
@@ -247,21 +273,18 @@ const DetailProduct = () => {
                 onChange={handleChange}
                 error={errors.email}
               />
-<Field
-  label="Số điện thoại"
-  name="phone"
-  value={form.phone}
-  onChange={handleChange}
-  inputMode="numeric"
-  maxLength={10}
-  pattern="^0[0-9]{9}$"            
-  title="Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số"
-  onInvalid={(e) =>
-    e.target.setCustomValidity("Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số")
-  }
-  onInput={(e) => e.target.setCustomValidity("")}  
-  autoComplete="tel"
-/>
+              <Field
+                label="Số điện thoại"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                inputMode="numeric"
+                pattern="0\d{9}"
+                maxLength={10}
+                placeholder="0xxxxxxxxx"
+                autoComplete="tel"
+                error={errors.phone}
+              />
               <Field
                 label="Thành phố"
                 name="city"
@@ -325,9 +348,10 @@ const DetailProduct = () => {
                 </div>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95"
+                  disabled={submitting}
+                  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95 disabled:opacity-60"
                 >
-                  Xác nhận đặt hàng
+                  {submitting ? "processing..." : "Order confirmation"}
                 </button>
               </div>
             </form>
@@ -353,6 +377,5 @@ function Field({ label, name, error, className = "", ...rest }) {
     </div>
   );
 }
-
 
 export default DetailProduct;

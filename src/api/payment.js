@@ -1,4 +1,3 @@
-// src/api/payment.js
 export async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
