@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ElevatedButton from "../../common/button/elevated-button/ElevatedButton";
 import VALIDATE from "../../../utils/validate";
 import IMAGES from "../../../utils/images";
+import BASE from "../../../utils/base";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -15,57 +16,65 @@ const LoginForm = () => {
   const [messageErrorPassword, setMessageErrorPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleValidateEmail = (value) => {
-    if (!value) {
+  // validate “tức thời” để không phụ thuộc setState bất đồng bộ
+  const validateNow = (emailVal, passwordVal) => {
+    let ok = true;
+
+    if (!emailVal) {
       setEmailInCorrect(true);
       setMessageEmailError("Email must not be empty!");
-    } else if (!VALIDATE.validateEmail(value)) {
+      ok = false;
+    } else if (!VALIDATE.validateEmail(emailVal)) {
       setEmailInCorrect(true);
       setMessageEmailError("Email format is invalid!");
+      ok = false;
     } else {
       setEmailInCorrect(false);
       setMessageEmailError("");
     }
-  };
 
-  const handleValidatePassword = (value) => {
-    if (!value) {
+    if (!passwordVal) {
       setPasswordInCorrect(true);
       setMessageErrorPassword("Password must not be empty!");
+      ok = false;
     } else {
       setPasswordInCorrect(false);
       setMessageErrorPassword("");
     }
+
+    return ok;
   };
 
   const handleLogin = async () => {
-    handleValidateEmail(email);
-    handleValidatePassword(password);
-
-    if (emailInCorrect || passwordInCorrect) {
-      return;
-    }
+    if (!validateNow(email, password)) return;
 
     setLoading(true);
     try {
       const res = await fetch(`${BASE.BASE_URL}/account/signIn`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       if (res.ok) {
+        // BE của bạn đang trả token dạng text
         const token = await res.text();
-        console.log(token);
-        // ✅ Login thành công
+
+        // ✅ Lưu trạng thái đăng nhập
         localStorage.setItem("isLoggedIn", "true");
+
+        // ✅ Dùng email làm khóa user (nếu BE trả userId thì dùng userId đó thay cho email)
+        localStorage.setItem("currentUserId", email.trim().toLowerCase());
+
+        // ✅ Lưu token (tạm dùng sessionStorage theo code hiện tại)
         sessionStorage.setItem("token", token);
+
+        // ✅ Báo cho CartContext load giỏ đúng user
+        window.dispatchEvent(new Event("cart-user-changed"));
+
         navigate("/");
       } else {
-        // ❌ Sai thông tin đăng nhập
         const message = await res.text();
         setPasswordInCorrect(true);
         setMessageErrorPassword(message || "Invalid credentials");
@@ -99,46 +108,41 @@ const LoginForm = () => {
           pet's needs—all in one place.
         </p>
       </div>
+
       <div>
         <div className="grid mb-4">
-          <label className="text-[14px] mb-0.5 text-(--color-title-60)">
-            Email
-          </label>
+          <label className="text-[14px] mb-0.5 text-(--color-title-60)">Email</label>
           <input
             className={classInputEmail}
             type="text"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onBlur={(e) => handleValidateEmail(e.target.value)}
+            onBlur={(e) => validateNow(e.target.value, password)}
           />
           {emailInCorrect && (
-            <p className="text-[13px] mt-0.5 text-red-400">
-              {messageErrorEmail}
-            </p>
+            <p className="text-[13px] mt-0.5 text-red-400">{messageErrorEmail}</p>
           )}
         </div>
+
         <div className="grid mb-7">
-          <label className="text-[14px] mb-0.5 text-(--color-title-60)">
-            Password
-          </label>
+          <label className="text-[14px] mb-0.5 text-(--color-title-60)">Password</label>
           <input
             className={classInputPassword}
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onBlur={(e) => handleValidatePassword(e.target.value)}
+            onBlur={(e) => validateNow(email, e.target.value)}
           />
           {passwordInCorrect && (
-            <p className="text-[13px] mt-0.5 text-red-400">
-              {messageErrorPassword}
-            </p>
+            <p className="text-[13px] mt-0.5 text-red-400">{messageErrorPassword}</p>
           )}
           <p className="text-[13px] mt-2 text-end text-(--color-title-50) cursor-pointer hover:text-(--color-title-70) ease-in duration-300">
             Forgot password ?
           </p>
         </div>
+
         <ElevatedButton
           text={loading ? "Logging in..." : "Login"}
           height={"48px"}
