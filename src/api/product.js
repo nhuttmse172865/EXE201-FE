@@ -1,7 +1,9 @@
 // src/api/product.js
 
+import BASE from "../utils/base";
+
 export async function fetchProductById(productId) {
-  const res = await fetch(`http://localhost:8080/product/${productId}`);
+  const res = await fetch(`${BASE.BASE_URL}/product/${productId}`);
 
   console.log("raw response:", res); // in ra Response object
 
