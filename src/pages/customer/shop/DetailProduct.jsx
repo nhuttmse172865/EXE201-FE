@@ -5,6 +5,7 @@ import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 
+// === MoMo helper (giống Cart.jsx) ===
 async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
@@ -42,7 +43,7 @@ const DetailProduct = () => {
   });
   const [errors, setErrors] = useState({});
 
- 
+  // tải sản phẩm
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -90,7 +91,7 @@ const DetailProduct = () => {
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(99, q + 1));
 
- 
+  // form handlers (giống Cart.jsx)
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -114,7 +115,7 @@ const DetailProduct = () => {
     return err;
   };
 
- 
+  // submit checkout (giống Cart.jsx)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
