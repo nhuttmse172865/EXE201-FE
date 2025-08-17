@@ -3,32 +3,16 @@ import { useParams } from "react-router-dom";
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
+import { fetchProductById } from "../../../api/product";
 
-const mockProducts = {
-  "dog-food": {
-    name: "Dog Food Premium",
-    image: "/src/assets/images/dog-food.png",
-    price: "$25.00",
-    description: "High-quality food for your dog.",
-    rating: 4.9,
-    details:
-      "This premium dog food is made with natural ingredients, providing complete nutrition.",
-  },
-  "cat-scratcher": {
-    name: "Cat Scratcher",
-    image: "/src/assets/images/cat-scratcher.jpg",
-    price: "$15.00",
-    description: "Durable scratcher for cats.",
-    rating: 4.8,
-    details:
-      "Helps your cat stay active and keeps claws healthy. Made from eco-friendly materials.",
-  },
-};
 
 const DetailProduct = () => {
   const { productId } = useParams();
-  const product = mockProducts[productId];
   const { addToCart } = useCart();
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [qty, setQty] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -45,6 +29,20 @@ const DetailProduct = () => {
   });
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetchProductById(productId)
+      .then((data) => {
+        setProduct(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || "Error fetching product");
+        setLoading(false);
+      });
+  }, [productId]);
+
   const parsePrice = (p) =>
     typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
 
@@ -59,6 +57,12 @@ const DetailProduct = () => {
     return () => document.removeEventListener("keydown", onKey);
   }, [showCheckout]);
 
+  if (loading) {
+    return <div className="text-center mt-20 text-gray-500">Loading product...</div>;
+  }
+  if (error) {
+    return <div className="text-center mt-20 text-red-500">{error}</div>;
+  }
   if (!product) {
     return <div className="text-center mt-20 text-red-500">Product not found</div>;
   }
@@ -132,7 +136,7 @@ const DetailProduct = () => {
         {/* Product detail */}
         <div className="flex flex-col md:flex-row gap-8">
           <img
-            src={product.imageUrl}
+            src={product.imageUrl || product.image}
             alt={product.name}
             className="w-full md:w-1/2 h-96 object-fit rounded-lg shadow"
           />
