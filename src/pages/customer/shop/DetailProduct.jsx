@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; 
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 
-// === MoMo helper (giống Cart.jsx) ===
 async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
@@ -22,11 +21,10 @@ async function createMomoPayment() {
 const DetailProduct = () => {
   const { productId } = useParams();
   const { addToCart } = useCart();
-
+  const navigate = useNavigate(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [qty, setQty] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -43,7 +41,7 @@ const DetailProduct = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // tải sản phẩm
+ 
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -85,13 +83,21 @@ const DetailProduct = () => {
   };
 
   // mở modal checkout
-  const buyNow = () => setShowCheckout(true);
+  const buyNow = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; 
+    if (!isLoggedIn) {
+      alert("Bạn cần đăng nhập để mua hàng!");
+      navigate("/login");  
+      return;
+    }
+    setShowCheckout(true);  
+  };
 
   // +/- quantity
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(99, q + 1));
 
-  // form handlers (giống Cart.jsx)
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -115,7 +121,7 @@ const DetailProduct = () => {
     return err;
   };
 
-  // submit checkout (giống Cart.jsx)
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
