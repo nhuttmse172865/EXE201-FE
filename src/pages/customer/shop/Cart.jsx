@@ -46,15 +46,16 @@ const Cart = () => {
     Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
 
   // mở/đóng modal
-  const openModal = () => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; 
-    if (!isLoggedIn) {
-      alert("Bạn cần đăng nhập để thanh toán!");
-      navigate("/login");  
-      return;
-    }
-    setShowCheckout(true);
-  };
+const openModal = () => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const uid = localStorage.getItem("currentUserId");
+  if (!isLoggedIn || !uid) {
+    alert("Bạn cần đăng nhập để thanh toán!");
+    navigate("/login");
+    return;
+  }
+  setShowCheckout(true);
+};
   const closeModal = () => setShowCheckout(false);
 
   // ESC để đóng
@@ -157,7 +158,7 @@ const handleSubmit = async (e) => {
                 </div>
  
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(index)}
                   className="text-red-500 hover:underline text-sm"
                 >
                   Remove
