@@ -21,7 +21,7 @@ async function createMomoPayment() {
 const DetailProduct = () => {
   const { productId } = useParams();
   const { addToCart } = useCart();
-  const navigate = useNavigate(); 
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,15 +83,16 @@ const DetailProduct = () => {
   };
 
   // mở modal checkout
-  const buyNow = () => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true"; 
-    if (!isLoggedIn) {
-      alert("Bạn cần đăng nhập để mua hàng!");
-      navigate("/login");  
-      return;
-    }
-    setShowCheckout(true);  
-  };
+const buyNow = () => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const uid = localStorage.getItem("currentUserId");
+  if (!isLoggedIn || !uid) {
+    alert("Bạn cần đăng nhập để mua ngay!");
+    navigate("/login");
+    return;
+  }
+  setShowCheckout(true);
+};
 
   // +/- quantity
   const dec = () => setQty((q) => Math.max(1, q - 1));
@@ -143,7 +144,7 @@ const DetailProduct = () => {
       } else {
         const data = await createMomoPayment();
         localStorage.setItem("lastOrderId", data.orderId || "");
-        window.location.href = data.payUrl; // chuyển sang cổng MoMo
+        window.location.href = data.payUrl;  
       }
     } catch (e2) {
       console.error(e2);

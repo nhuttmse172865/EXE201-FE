@@ -3,7 +3,6 @@ import WebInfor from "./web-infor/WebInfor";
 import CustomerUtils from "./customer-utils/CustomerUtils";
 import Logo from "./logo/Logo";
 import useIsInViewport from "../../../hooks/useIsInViewport";
-import { FaUserCircle } from "react-icons/fa";
 import { useCart } from "../../../contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -14,28 +13,56 @@ const Header = ({ border, isLogo = true }) => {
   const { cartItems } = useCart();
   const navigate = useNavigate();
 
-  // Trạng thái login
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(
+    () => localStorage.getItem("isLoggedIn") === "true"
+  );
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Đồng bộ isLogin khi login/logout
   useEffect(() => {
-    setIsLogin(localStorage.getItem("isLoggedIn") === "true");
+    const syncLoginState = () =>
+      setIsLogin(localStorage.getItem("isLoggedIn") === "true");
+
+    // Sự kiện tuỳ chỉnh mà ta đã dùng ở LoginForm / CartContext
+    const onCartUserChanged = () => syncLoginState();
+
+    window.addEventListener("cart-user-changed", onCartUserChanged);
+    // Bắt cả thay đổi localStorage từ tab khác (nếu dùng nhiều tab)
+    const onStorage = (e) => {
+      if (e.key === "isLoggedIn") syncLoginState();
+    };
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      window.removeEventListener("cart-user-changed", onCartUserChanged);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   const handleLogout = () => {
+    // Xoá trạng thái đăng nhập + userId hiện tại
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentUserId");
+
+    // Thông báo cho CartContext nạp giỏ đúng (sẽ về cart_guest)
+    window.dispatchEvent(new Event("cart-user-changed"));
+
     setIsLogin(false);
+    setMenuOpen(false);
     navigate("/login");
   };
 
   return (
     <div
-      className={`mx-auto container w-full h-[70px] flex justify-between items-center relative z-50 morph-in-item ${inView ? "morph-in-active" : ""
-        }`}
+      className={`mx-auto container w-full h-[70px] flex justify-between items-center relative z-50 morph-in-item ${
+        inView ? "morph-in-active" : ""
+      }`}
       ref={headerSectionRef}
     >
       <WebInfor />
-      {isLogo && <Logo border={border} />
-      }
+
+      {isLogo && <Logo border={border} />}
+
       <div className="flex items-center gap-4">
         {/* Giỏ hàng */}
         <Link
@@ -50,11 +77,10 @@ const Header = ({ border, isLogo = true }) => {
           )}
         </Link>
 
-{/* login/register */}
+        {/* login/register hoặc profile */}
         {!isLogin ? (
           <CustomerUtils />
         ) : (
-          // Profile + dropdown
           <div
             className="relative"
             onMouseEnter={() => setMenuOpen(true)}
@@ -64,7 +90,7 @@ const Header = ({ border, isLogo = true }) => {
               type="button"
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl"
               title="My Profile"
-              onClick={() => setMenuOpen((s) => !s)} // click để mở/đóng
+              onClick={() => setMenuOpen((s) => !s)}
             >
               👤
             </button>
@@ -72,7 +98,6 @@ const Header = ({ border, isLogo = true }) => {
             {menuOpen && (
               <div
                 className="absolute right-0 top-full bg-white border rounded shadow px-4 py-2 cursor-pointer whitespace-nowrap z-50"
-                // KHÔNG để mt-2 để tránh tạo khe hở
                 onClick={handleLogout}
               >
                 Logout
