@@ -5,16 +5,8 @@ import BookingList from "../../../components/customer/account/BookingList";
 import ListChat from "../../../components/customer/account/ListChat";
 import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
-<<<<<<< HEAD
 import OrderDetail from "../../../components/customer/account/OrderDetail";  
 import imgDogSleep from "../../../assets/images/dog-sleep.jpg";
-=======
-import OrderDetail from "../../../components/customer/account/OrderDetail";
-import BASE from "../../../utils/base";
-import banner from "/src/assets/images/dog-sleep.jpg";
-import axios from "axios";
-
->>>>>>> 50b3ebebeda007381cabee2f93a372f23bcbfdbb
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
     onClick={onClick}
@@ -99,11 +91,7 @@ const UserProfile = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-<<<<<<< HEAD
             src= {imgDogSleep}
-=======
-            src={banner}
->>>>>>> 50b3ebebeda007381cabee2f93a372f23bcbfdbb
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
