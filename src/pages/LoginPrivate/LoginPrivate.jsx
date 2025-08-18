@@ -1,30 +1,61 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";
 import swal from "sweetalert";
 import "./LoginPrivate.css";
 import { getRoleFromToken } from "./jwtHelper";
+import imgLogin from "/src/assets/images/login-private.jpg";
+
+// import { login } from "../../api/auth";
+
+const TEST_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";  
 
 const LoginPrivate = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [captchaValue, setCaptchaValue] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+
+ 
+  const siteKey = useMemo(() => {
+    const host = window.location.hostname;              
+    const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+    const isLocal =
+      host === "localhost" || host === "127.0.0.1" || host.endsWith(".local");
+
+ 
+    const fromEnv = import.meta.env.VITE_RECAPTCHA_SITE_KEY?.trim();
+    if (fromEnv) return fromEnv;
+
+ 
+    if (isIP || isLocal) return TEST_SITE_KEY;
+
+ 
+    return "";
+  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
+    if (!siteKey) {
+      toast.error("reCAPTCHA chưa được cấu hình cho domain này.");
+      return;
+    }
     if (!captchaValue) {
-      toast.error("Please complete the captcha.");
+      toast.error("Vui lòng hoàn thành reCAPTCHA.");
       return;
     }
     if (!email || !password) {
-      toast.error("Missing Email or Password");
+      toast.error("Thiếu Email hoặc Mật khẩu.");
       return;
     }
 
     try {
+      setSubmitting(true);
+
+ 
       const response = await login(email, password);
 
       if (response?.status === 200) {
@@ -34,11 +65,14 @@ const LoginPrivate = () => {
 
         const role = getRoleFromToken(token);
         if (role === "User") {
-          alert("Oke bạn nay User ne");
+          toast.success("Đăng nhập thành công (User).");
           navigate("/");
           window.location.reload();
         } else if (role === "Admin") {
-          alert("Oke bạn nay Admin ne");
+          toast.success("Đăng nhập thành công (Admin).");
+          navigate("/");
+        } else {
+          toast.info("Đăng nhập thành công.");
           navigate("/");
         }
       }
@@ -48,7 +82,7 @@ const LoginPrivate = () => {
       if (status === 403) {
         swal({
           title: "Banned",
-          text: "Your account has been banned indefinitely and cannot log in.",
+          text: "Tài khoản của bạn đã bị khóa vĩnh viễn và không thể đăng nhập.",
           icon: "error",
           buttons: {
             ok: { text: "OK", value: true, className: "swal-ok-button" },
@@ -56,22 +90,27 @@ const LoginPrivate = () => {
         });
       } else if (status === 400) {
         swal({
-          title: "Incorrect Account or Password",
-          text: "Please check your email or password to login again.",
+          title: "Sai tài khoản hoặc mật khẩu",
+          text: "Vui lòng kiểm tra lại email hoặc mật khẩu.",
           icon: "error",
           buttons: {
             ok: { text: "OK", value: true, className: "swal-ok-button" },
-          }});
+          },
+        });
       } else {
         console.error("Login failed:", status, error);
-        toast.error("Login failed. Please try again.");
+        toast.error("Đăng nhập thất bại. Vui lòng thử lại.");
       }
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleEmailChange = (event) => setEmail(event.target.value);
   const handlePasswordChange = (event) => setPassword(event.target.value);
-  const handleOnClick = () => { window.location.href = "/loginprivate"; };
+  const handleOnClick = () => {
+    window.location.href = "/loginprivate";
+  };
 
   return (
     <>
@@ -86,7 +125,7 @@ const LoginPrivate = () => {
       </header>
 
       <div className="head-content">
-        <img src="/src/assets/images/login-private.jpg" alt="" />
+        <img src={imgLogin} alt="" />
         <div className="content">
           <form className="form-login" onSubmit={handleLogin}>
             <h3 className="text-welcome">Welcome</h3>
@@ -116,15 +155,29 @@ const LoginPrivate = () => {
             </div>
 
             <div className="Recapcha">
-              <ReCAPTCHA
-                sitekey="6LeOW-gpAAAAAIjpbDvMlkseUc96hpxAWvxDofYQ"
-                onChange={(val) => setCaptchaValue(val)}
-              />
+              {siteKey ? (
+                <ReCAPTCHA
+                  sitekey={siteKey}
+                  onChange={(val) => setCaptchaValue(val)}
+                  onErrored={() =>
+                    toast.error(
+                      "Không thể tải reCAPTCHA. Kiểm tra lại domain/site key."
+                    )
+                  }
+                />
+              ) : (
+                <div className="text-sm text-red-500">
+                  reCAPTCHA chưa được cấu hình cho domain này.
+                </div>
+              )}
             </div>
 
- 
-            <input className="button-login" type="submit" value="Login" />
- 
+            <input
+              className="button-login"
+              type="submit"
+              value={submitting ? "Processing..." : "Login"}
+              disabled={submitting || !siteKey}
+            />
           </form>
         </div>
       </div>
@@ -135,9 +188,18 @@ const LoginPrivate = () => {
           <div>
             <ul>
               <h3>Reach us</h3>
-              <li><img src="/src/assets/phone.svg" alt="" /><span>+843899999999</span></li>
-              <li><img src="/src/assets/email.svg" alt="" /><span>petcare@gmail.com</span></li>
-              <li><img src="/src/assets/location.svg" alt="" /><span>Long Thanh My, Thu Duc, Ho Chi Minh, Viet Nam</span></li>
+              <li>
+                <img src="/src/assets/phone.svg" alt="" />
+                <span>+843899999999</span>
+              </li>
+              <li>
+                <img src="/src/assets/email.svg" alt="" />
+                <span>petcare@gmail.com</span>
+              </li>
+              <li>
+                <img src="/src/assets/location.svg" alt="" />
+                <span>Long Thanh My, Thu Duc, Ho Chi Minh, Viet Nam</span>
+              </li>
             </ul>
             <ul>
               <h3>Company</h3>
