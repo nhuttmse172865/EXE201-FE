@@ -23,11 +23,11 @@ const Header = ({ border, isLogo = true }) => {
     const syncLoginState = () =>
       setIsLogin(localStorage.getItem("isLoggedIn") === "true");
 
-    // Sự kiện tuỳ chỉnh mà ta đã dùng ở LoginForm / CartContext
+    // LoginForm / CartContext
     const onCartUserChanged = () => syncLoginState();
 
     window.addEventListener("cart-user-changed", onCartUserChanged);
-    // Bắt cả thay đổi localStorage từ tab khác (nếu dùng nhiều tab)
+    //  thay đổi localStorage từ tab khác (nếu dùng nhiều tab)
     const onStorage = (e) => {
       if (e.key === "isLoggedIn") syncLoginState();
     };
@@ -40,11 +40,10 @@ const Header = ({ border, isLogo = true }) => {
   }, []);
 
   const handleLogout = () => {
-    // Xoá trạng thái đăng nhập + userId hiện tại
+    // Xoá đăng nhập + userId hiện tại
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("currentUserId");
-
-    // Thông báo cho CartContext nạp giỏ đúng (sẽ về cart_guest)
+    
     window.dispatchEvent(new Event("cart-user-changed"));
 
     setIsLogin(false);
