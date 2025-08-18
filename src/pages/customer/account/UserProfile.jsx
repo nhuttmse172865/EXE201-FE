@@ -94,7 +94,6 @@ const UserProfile = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-
             src={banner}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
