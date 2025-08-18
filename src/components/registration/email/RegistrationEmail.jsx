@@ -22,9 +22,7 @@ const RegistrationEmail = () => {
       });
 
       if (res.ok) {
-        navigate("/registration/confirm-email", {
-          state: { email: email },
-        });
+        navigate("/");
       } else {
         const err = await res.text();
         alert("Đăng ký thất bại: " + err);
