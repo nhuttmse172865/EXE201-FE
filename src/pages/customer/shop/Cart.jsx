@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import cartBanner from "../../../assets/images/cart-banner.jpg";  
-
+import momoQr from "/src/assets/images/momo-qr.jpg"   
+import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
+ 
 async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
@@ -19,7 +21,9 @@ async function createMomoPayment() {
 }
 
 const Cart = () => {
-  const { cartItems, removeFromCart } = useCart();
+ 
+    const [showMomoQR, setShowMomoQR] = useState(false); 
+  const { cartItems, removeFromCart , clearCart} = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate(); 
@@ -31,7 +35,7 @@ const Cart = () => {
     city: "",
     postalCode: "",
     note: "",
-    paymentMethod: "cod",
+    paymentMethod: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -86,6 +90,9 @@ const openModal = () => {
     if (!form.address.trim()) err.address = "Vui lòng nhập địa chỉ.";
     if (!form.city.trim()) err.city = "Vui lòng nhập thành phố.";
     if (!form.postalCode.trim()) err.postalCode = "Vui lòng nhập mã bưu chính.";
+    if (form.paymentMethod !== "momo") {
+      err.paymentMethod = "Vui lòng chọn phương thức MoMo để tiếp tục.";
+    }
     return err;
   };
 
@@ -99,15 +106,10 @@ const handleSubmit = async (e) => {
   try {
     setSubmitting(true);
 
-    if (form.paymentMethod === "cod") {
- 
-      alert(
-        `Order successful!\nTotal: ${currency(total)}\nPay: ${form.paymentMethod.toUpperCase()}`
-      );
-      closeModal();
+    if(form.paymentMethod === "momo") {
+ setShowMomoQR(true);
     } else {
- 
-      const data = await createMomoPayment();
+      // const data = await createMomoPayment();
  
       localStorage.setItem("lastOrderId", data.orderId || "");
       window.location.href = data.payUrl;  
@@ -120,6 +122,12 @@ const handleSubmit = async (e) => {
   }
 };
 
+  const handleMomoPaid = () => {
+    clearCart();                    
+    setShowMomoQR(false);
+    closeModal();
+    navigate("/checkout/thankyou");  
+  };
   return (
     <div>
       <Header />
@@ -267,27 +275,23 @@ const handleSubmit = async (e) => {
                   Phương thức thanh toán
                 </label>
                 <div className="flex items-center gap-6">
+ 
+
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="cod"
-                      checked={form.paymentMethod === "cod"}
+                      value="momo"                 
+                      checked={form.paymentMethod === "momo"}
                       onChange={handleChange}
                     />
-                    <span>Thanh toán khi nhận hàng (COD)</span>
+                    <span>MoMo (Quét QR)</span>
                   </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={form.paymentMethod === "card"}
-                      onChange={handleChange}
-                    />
-                    <span>Thẻ / Ví</span>
-                  </label>
+
                 </div>
+                            {errors.paymentMethod && (
+              <p className="text-xs text-red-600 mt-1">{errors.paymentMethod}</p>
+            )}
               </div>
 
               <div className="md:col-span-2 flex items-center justify-between pt-2">
@@ -306,6 +310,14 @@ const handleSubmit = async (e) => {
           </div>
         </div>
       )}
+
+      <MomoQRModal
+        open={showMomoQR}
+        onClose={() => setShowMomoQR(false)}
+        amountText={currency(total)}
+        qrImg={momoQr}
+        onPaid={handleMomoPaid}
+      />
 
       <Footer />
     </div>
