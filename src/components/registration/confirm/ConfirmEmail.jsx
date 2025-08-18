@@ -53,7 +53,7 @@ const ConfirmEmail = () => {
         </label>
         <input
           className={classInputCode}
-          type="number"
+          type="text"
           placeholder="Enter Code"
           value={otp}
           onChange={(event) => {
