@@ -4,7 +4,8 @@ import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
-
+import momoQr from "/src/assets/images/momo-qr.jpg"   
+import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
 async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
@@ -20,8 +21,9 @@ async function createMomoPayment() {
 
 const DetailProduct = () => {
   const { productId } = useParams();
+    const navigate = useNavigate(); 
   const { addToCart } = useCart();
-
+    const [showMomoQR, setShowMomoQR] = useState(false); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,7 +39,7 @@ const DetailProduct = () => {
     city: "",
     postalCode: "",
     note: "",
-    paymentMethod: "cod",
+    paymentMethod: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -119,6 +121,9 @@ const buyNow = () => {
     if (!form.address.trim()) err.address = "Vui lòng nhập địa chỉ.";
     if (!form.city.trim()) err.city = "Vui lòng nhập thành phố.";
     if (!form.postalCode.trim()) err.postalCode = "Vui lòng nhập mã bưu chính.";
+     if (form.paymentMethod !== "momo") {
+      err.paymentMethod = "Vui lòng chọn phương thức MoMo để tiếp tục.";
+    }
     return err;
   };
 
@@ -134,18 +139,14 @@ const buyNow = () => {
     try {
       setSubmitting(true);
 
-      if (form.paymentMethod === "cod") {
-        alert(
-          `Order successful!\nProduct: ${product.name} x${qty}\nTotal: ${currency(
-            total
-          )}\nPay: ${form.paymentMethod.toUpperCase()}`
-        );
-        setShowCheckout(false);
-      } else {
-        const data = await createMomoPayment();
-        localStorage.setItem("lastOrderId", data.orderId || "");
-        window.location.href = data.payUrl;  
-      }
+      if(form.paymentMethod === "momo") {
+ setShowMomoQR(true);
+    } else {
+      // const data = await createMomoPayment();
+ 
+      localStorage.setItem("lastOrderId", data.orderId || "");
+      window.location.href = data.payUrl;  
+    }
     } catch (e2) {
       console.error(e2);
       alert(e2.message || "Unable to initiate payment. Please try again.");
@@ -153,7 +154,11 @@ const buyNow = () => {
       setSubmitting(false);
     }
   };
-
+const handleMomoPaid = () => {
+  setShowMomoQR(false);
+  setShowCheckout(false);
+  navigate("/checkout/thankyou");    
+};
   return (
     <div>
       <Header />
@@ -327,27 +332,21 @@ const buyNow = () => {
                   Phương thức thanh toán
                 </label>
                 <div className="flex items-center gap-6">
+ 
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="cod"
-                      checked={form.paymentMethod === "cod"}
+                      value="momo"                 
+                      checked={form.paymentMethod === "momo"}
                       onChange={handleChange}
                     />
-                    <span>Thanh toán khi nhận hàng (COD)</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={form.paymentMethod === "card"}
-                      onChange={handleChange}
-                    />
-                    <span>Thẻ / Ví</span>
+                    <span>MoMo (Quét QR)</span>
                   </label>
                 </div>
+                 {errors.paymentMethod && (
+              <p className="text-xs text-red-600 mt-1">{errors.paymentMethod}</p>
+            )}
               </div>
 
               <div className="md:col-span-2 flex items-center justify-between pt-2">
@@ -366,6 +365,14 @@ const buyNow = () => {
           </div>
         </div>
       )}
+
+      <MomoQRModal
+        open={showMomoQR}
+        onClose={() => setShowMomoQR(false)}
+        amountText={currency(total)}
+        qrImg={momoQr}
+         onPaid={handleMomoPaid}  
+      />
 
       <Footer />
     </div>
