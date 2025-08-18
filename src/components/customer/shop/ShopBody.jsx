@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE from "../../../utils/base";
+import image1 from "../../../assets/images/shop-banner.jpg";
 
 const ShopBody = () => {
   const [products, setProducts] = useState([]);
@@ -56,7 +57,7 @@ const ShopBody = () => {
       {/* Banner */}
       <div className="mb-8">
         <img
-          src="/src/assets/images/shop-banner.jpg"
+          src={image1}
           alt="Shop Banner"
           className="w-full h-[250px] object-cover rounded-2xl shadow-md"
         />

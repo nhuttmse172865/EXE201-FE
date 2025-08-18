@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import OFFER_LIST from "../../../../../../utils/offer-list";
-
+import imgOffer from "../../../../../../assets/images/offer-dog.jpg";
 const Offer = () => {
   const [widthMargin, setWidthMargin] = useState();
 
@@ -30,7 +30,9 @@ const Offer = () => {
           style={{
             width: `calc(100% + ${widthMargin}px)`,
           }}
-        ></div>
+        >
+          <img src={imgOffer} alt="Offer Background" className="w-full h-full object-cover rounded-[30px]" />
+        </div>
       </div>
 
       <div className="w-[45%] pl-10 flex flex-col gap-10 h-full items-center justify-center">

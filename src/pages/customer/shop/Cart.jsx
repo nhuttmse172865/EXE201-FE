@@ -53,6 +53,7 @@ const Cart = () => {
       ),
     [cartItems]
   );
+  
   const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // mở/đóng modal
