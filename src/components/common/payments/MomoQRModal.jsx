@@ -25,7 +25,7 @@ const MomoQRModal = ({ open, onClose, amountText, qrImg, onPaid }) => {
         </div>
 
         <p className="text-sm text-gray-600 mb-3">
-          Quét mã bằng ứng dụng MoMo của bạn. Số tiền: <b>{amountText}</b>
+          Quét mã bằng ứng dụng MoMo. Số tiền: <b>{amountText}</b>
         </p>
 
         <div className="rounded-xl border p-3 grid place-items-center">
