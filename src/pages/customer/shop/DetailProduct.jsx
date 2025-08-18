@@ -6,8 +6,9 @@ import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 import momoQr from "/src/assets/images/momo-qr.jpg"   
 import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
+import BASE from "../../../utils/base.js";
 async function createMomoPayment() {
-  const res = await fetch("http://localhost:8080/payment", {
+  const res = await fetch(`${BASE.BASE_URL}/payment`, {
     method: "GET",
     headers: { Accept: "application/json" },
   });

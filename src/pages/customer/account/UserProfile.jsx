@@ -6,6 +6,7 @@ import ListChat from "../../../components/customer/account/ListChat";
 import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
 import OrderDetail from "../../../components/customer/account/OrderDetail";  
+import BASE from "../../../utils/base";
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
@@ -38,7 +39,7 @@ const UserProfile = () => {
   const fetchProfile = async () => {
     try {
       // Fetch user profile data from API
-      const response = await axios.get("http://localhost:8080/account/profile",
+      const response = await axios.get(`${BASE.BASE_URL}/account/profile`,
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
