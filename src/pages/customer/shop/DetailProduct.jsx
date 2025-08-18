@@ -65,7 +65,7 @@ const DetailProduct = () => {
   const unitPrice = useMemo(() => (product ? parsePrice(product.price) : 0), [product]);
   const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
   const currency = (n) =>
-    Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
+    Number(n).toLocaleString(undefined, { style: "currency", currency: "VND" });
 
   // ESC để đóng modal
   useEffect(() => {
