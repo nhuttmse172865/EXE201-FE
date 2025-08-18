@@ -7,6 +7,8 @@ import { fetchProductById } from "../../../api/product";
 import momoQr from "/src/assets/images/momo-qr.jpg"   
 import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
 import img1 from "../../../assets/images/pet-food-baner.jpg";
+import BASE from "../../../utils/base.js";
+
 async function createMomoPayment() {
   const res = await fetch(`${BASE.BASE_URL}/payment`, {
     method: "GET",
