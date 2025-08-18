@@ -39,15 +39,21 @@ const Cart = () => {
   });
   const [errors, setErrors] = useState({});
 
-  const parsePrice = (p) =>
-    typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
+  const parsePrice = (p) => {
+    if (typeof p === "number") return p;
+    const digits = String(p).replace(/[^\d]/g, "");
+    return digits ? Number(digits) : 0;
+  };
 
   const total = useMemo(
-    () => cartItems.reduce((s, it) => s + parsePrice(it.price), 0),
+    () =>
+      cartItems.reduce(
+        (s, it) => s + parsePrice(it.price) * (it.qty ? Number(it.qty) : 1),
+        0
+      ),
     [cartItems]
   );
-  const currency = (n) =>
-    Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
+  const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // mở/đóng modal
 const openModal = () => {

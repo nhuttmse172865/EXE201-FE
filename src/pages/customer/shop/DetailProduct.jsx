@@ -60,12 +60,11 @@ const DetailProduct = () => {
 
   // util
   const parsePrice = (p) =>
-    typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
+  typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
 
   const unitPrice = useMemo(() => (product ? parsePrice(product.price) : 0), [product]);
-  const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
-  const currency = (n) =>
-    Number(n).toLocaleString(undefined, { style: "currency", currency: "VND" });
+const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
+const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // ESC để đóng modal
   useEffect(() => {
