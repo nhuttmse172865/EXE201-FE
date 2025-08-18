@@ -7,6 +7,7 @@ import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
 import OrderDetail from "../../../components/customer/account/OrderDetail";  
 import BASE from "../../../utils/base";
+import axios from "axios";
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button

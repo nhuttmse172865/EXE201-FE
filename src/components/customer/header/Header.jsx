@@ -89,7 +89,10 @@ const Header = ({ border, isLogo = true }) => {
               type="button"
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-xl"
               title="My Profile"
-              onClick={() => setMenuOpen((s) => !s)}
+              onClick={() => {
+                setMenuOpen((s) => !s);
+                navigate("/profile");
+              }}
             >
               👤
             </button>
