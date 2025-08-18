@@ -158,7 +158,7 @@ const handleSubmit = async (e) => {
                 className="flex items-center gap-4 border-b border-gray-300 border-dashed pb-4"
               >
                 <img
-                  src={item.image}  
+                  src={item.imageUrl}  
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />
