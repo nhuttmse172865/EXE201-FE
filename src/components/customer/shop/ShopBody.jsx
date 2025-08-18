@@ -109,7 +109,7 @@ const ShopBody = () => {
               <div className="p-3">
                 <h2 className="text-base font-semibold">{product.name}</h2>
                 <p className="text-sm text-pink-600 font-bold">
-                  ${product.price.toFixed(2)}
+                  {product.price}đ
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
                   {product.description}
