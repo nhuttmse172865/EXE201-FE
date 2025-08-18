@@ -2,7 +2,7 @@ import React from "react";
 import ElevatedButton from "../../common/button/elevated-button/ElevatedButton";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import BASE from "../../../utils/base.js";
 const RegistrationEmail = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

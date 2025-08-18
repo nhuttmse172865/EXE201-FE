@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ElevatedButton from "../../common/button/elevated-button/ElevatedButton";
-
+import BASE from "../../../utils/base.js";
 const ConfirmEmail = () => {
   const [otp, setOTP] = useState("");
   const [error, setError] = useState(false);
@@ -53,7 +53,7 @@ const ConfirmEmail = () => {
         </label>
         <input
           className={classInputCode}
-          type="number"
+          type="text"
           placeholder="Enter Code"
           value={otp}
           onChange={(event) => {
