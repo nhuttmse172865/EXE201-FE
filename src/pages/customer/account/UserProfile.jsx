@@ -7,6 +7,7 @@ import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
 import OrderDetail from "../../../components/customer/account/OrderDetail";
 import BASE from "../../../utils/base";
+import banner from "/src/assets/images/dog-sleep.jpg";
 import axios from "axios";
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
@@ -93,7 +94,7 @@ const UserProfile = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/dog-sleep.jpg"
+            src={banner}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
