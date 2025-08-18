@@ -6,7 +6,7 @@ import ListChat from "../../../components/customer/account/ListChat";
 import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
 import OrderDetail from "../../../components/customer/account/OrderDetail";  
-
+import imgDogSleep from "../../../assets/images/dog-sleep.jpg";
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
     onClick={onClick}
@@ -84,7 +84,7 @@ const onSave = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/dog-sleep.jpg"
+            src= {imgDogSleep}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />

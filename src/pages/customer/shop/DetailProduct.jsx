@@ -6,6 +6,7 @@ import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 import momoQr from "/src/assets/images/momo-qr.jpg"   
 import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
+import img1 from "../../../assets/images/pet-food-baner.jpg";
 async function createMomoPayment() {
   const res = await fetch("http://localhost:8080/payment", {
     method: "GET",
@@ -166,7 +167,7 @@ const handleMomoPaid = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/pet-food-baner.jpg"
+            src={img1}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />

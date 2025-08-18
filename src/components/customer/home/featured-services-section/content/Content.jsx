@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import Card from "./card/Card";
-
+import img1 from "/src/assets/images/grooming.jpg";
+import img2 from "/src/assets/images/veterinarian.jpg";
+import img3 from "/src/assets/images/boarding.jpg";
+import img4 from "/src/assets/images/training.jpg";
+import img5 from "/src/assets/images/emergency.jpg";
+import img6 from "/src/assets/images/spa.png";
+import img7 from "/src/assets/images/dental.jpg";
+import img8 from "/src/assets/images/transport.jpg";
+import img9 from "/src/assets/images/nutrition.jpg";
+import img10 from "/src/assets/images/behavioral.jpg";
 const Content = () => {
   const [featuredServices, setFeaturedServices] = useState([
     {
@@ -9,6 +18,7 @@ const Content = () => {
       clinic: "Pet Paradise Clinic",
       address: "District 1, HCMC (2.5 km)",
       used: 245,
+      imageUrl: img1,
     },
     {
       name: "Vaccination & General Check-up",
@@ -17,6 +27,7 @@ const Content = () => {
       clinic: "Healthy Paws Vet",
       address: "District 3, HCMC (5.1 km)",
       used: 180,
+      imageUrl: img2,
     },
     {
       name: "Pet Boarding",
@@ -25,6 +36,7 @@ const Content = () => {
       clinic: "Happy Tails Hotel",
       address: "District 7, HCMC (8.0 km)",
       used: 320,
+      imageUrl: img3,
     },
     {
       name: "Pet Training",
@@ -33,6 +45,7 @@ const Content = () => {
       clinic: "K9 Academy",
       address: "District 2, HCMC (3.8 km)",
       used: 150,
+      imageUrl: img4,
     },
     {
       name: "24/7 Emergency Service",
@@ -40,6 +53,7 @@ const Content = () => {
       clinic: "Emergency Pet Care",
       address: "District 4, HCMC (6.7 km)",
       used: 410,
+      imageUrl: img5,
     },
     {
       name: "Spa & Beauty Services",
@@ -48,6 +62,7 @@ const Content = () => {
       clinic: "Pet Grooming Salon",
       address: "District 5, HCMC (4.2 km)",
       used: 290,
+      imageUrl: img6,
     },
     {
       name: "Dental Care",
@@ -56,6 +71,7 @@ const Content = () => {
       clinic: "Bright Smiles Vet",
       address: "District 10, HCMC (7.5 km)",
       used: 90,
+      imageUrl: img7,
     },
     {
       name: "Pet Transport",
@@ -64,6 +80,7 @@ const Content = () => {
       clinic: "Pet Express Transport",
       address: "Binh Thanh District, HCMC (1.2 km)",
       used: 115,
+       imageUrl: img8,
     },
     {
       name: "Nutrition Counseling",
@@ -72,6 +89,7 @@ const Content = () => {
       clinic: "NutriPet Clinic",
       address: "Phu Nhuan District, HCMC (4.9 km)",
       used: 60,
+       imageUrl: img9,
     },
     {
       name: "Behavioral Therapy",
@@ -80,6 +98,7 @@ const Content = () => {
       clinic: "Calm Paws Center",
       address: "Go Vap District, HCMC (9.3 km)",
       used: 75,
+      imageUrl: img10,
     },
   ]);
 
@@ -127,6 +146,7 @@ const Content = () => {
           used={item.used}
           addressClinic={item.address}
           nameClinic={item.clinic}
+          imageUrl={item.imageUrl}
         />
       ))}
     </div>

@@ -1,12 +1,15 @@
 import React from "react";
-
+ 
 const Card = ({
   nameService,
   descriptionService,
   nameClinic,
   addressClinic,
   used,
+  imageUrl,
 }) => {
+
+    const imgAvatar = "https://i.pravatar.cc/40";
   return (
     <div className="h-[300px] flex-shrink-0 w-[239px] bg-[rgba(0,0,0,0.1)] rounded-[16px] p-3.5 relative cursor-pointer">
       <h4 className="font-family-playfair-display text-[16px] line-clamp-1">
@@ -15,6 +18,19 @@ const Card = ({
       <p className="text-[12px] text-[rgba(0,0,0,0.5)] mt-0.5 line-clamp-2">
         {descriptionService}
       </p>
+
+<div className="mt-2 h-[140px] rounded-[12px] overflow-hidden bg-[rgba(0,0,0,0.06)]">
+  {imageUrl && (
+    <img
+      src={imageUrl}
+      alt={nameService}
+      className="w-full h-full object-cover"
+      loading="lazy"
+      onError={(e) => { e.currentTarget.src = "/placeholder-600x400.jpg"; }}
+    />
+  )}
+</div>
+
 
       <div className="absolute bottom-0 right-0">
         <div className="flex justify-end">
@@ -41,9 +57,20 @@ const Card = ({
               {addressClinic}
             </p>
           </div>
-          <div>
-            <div className="w-[40px] h-[40px] bg-[rgba(0,0,0,0.1)] rounded-full"></div>
+
+          {/* Avatar */}
+          <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
+            <img
+              src={imgAvatar}
+              alt={nameClinic}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = "/placeholder-40.png";
+              }}
+            />
           </div>
+ 
 
           <div className="absolute bg-amber-200 w-[16px] h-[16px] right-full bottom-0">
             <div className="bg-[rgba(0,0,0,0.1)] w-full h-full absolute z-10 rounded-br-[16px]"></div>
