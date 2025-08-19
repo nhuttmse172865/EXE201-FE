@@ -14,7 +14,7 @@ const BookInformation = ({ handleNextStep, handlePreviousStep }) => {
     <div>
       {booking?.service && <ServiceInfor />}
       {booking?.clinic && <ClinicInfor booking={booking} />}
-      {booking?.time && <TimeInfor />}
+      {(booking?.time || booking?.date) && <TimeInfor />}
       {booking?.service && <Total />}
 
       <div className="mt-5 flex gap-x-10">

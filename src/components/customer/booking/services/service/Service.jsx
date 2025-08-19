@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Item from "./item/Item";
+import axios from "axios";
+import BASE from "../../../../../utils/base";
 
 const Service = () => {
-  const [pageNumber, setPageNumber] = useState(5);
+  const [pageNumber, setPageNumber] = useState(0);
   const [activePage, setActivePage] = useState();
+  const [services, setServices] = useState([]);
 
+  const handleFetchServicesData = async () => {
+    try {
+      const res = await axios.get(`${BASE.BASE_URL}/api/hospitalservices/all`);
+      setServices(res.data);
+    } catch (error) {
+      console.error("Error fetching services data:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchServicesData();
+  }, []);
   return (
     <div>
       <div className="mt-11 grid grid-cols-4 gap-11">
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
+        {services && services.map((item) => <Item item={item}/>)}
       </div>
       <div className="w-full mt-11 flex justify-center gap-5">
         {Array.from({ length: pageNumber }).map((_, index) => (
