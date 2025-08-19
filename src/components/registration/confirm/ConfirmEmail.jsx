@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ElevatedButton from "../../common/button/elevated-button/ElevatedButton";
+import BASE from "../../../utils/base";
 
 const ConfirmEmail = () => {
   const [otp, setOTP] = useState("");
@@ -58,7 +59,7 @@ const ConfirmEmail = () => {
           value={otp}
           onChange={(event) => {
             setOTP(event.target.value);
-            setError(false); // reset khi user gõ lại
+            setError(false);
           }}
         />
         {error && (

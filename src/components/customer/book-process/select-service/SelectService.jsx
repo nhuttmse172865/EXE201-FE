@@ -8,8 +8,8 @@ import useLocalStorage from "use-local-storage";
 
 const SelectService = () => {
   const [services, setServices] = useState([]);
-  const [booking,setBooking] = useLocalStorage("booking","");
-  const [serviceActive,setServiceActive] = useState();
+  const [booking, setBooking] = useLocalStorage("booking", "");
+  const [serviceActive, setServiceActive] = useState();
 
   const handleFetchServicesData = async () => {
     try {
@@ -22,6 +22,7 @@ const SelectService = () => {
 
   useEffect(() => {
     handleFetchServicesData();
+    setBooking({ service: booking?.service });
   }, []);
 
   return (
@@ -48,7 +49,12 @@ const SelectService = () => {
 
       <div className="grid grid-cols-4 gap-6 mt-10">
         {services?.map((item) => (
-          <Service item={item} serviceActive={serviceActive} setServiceActive={setServiceActive} setBooking={setBooking} />
+          <Service
+            item={item}
+            serviceActive={serviceActive}
+            setServiceActive={setServiceActive}
+            setBooking={setBooking}
+          />
         ))}
       </div>
       {/* <div className="mt-10 mb-5 flex justify-center gap-2.5">
