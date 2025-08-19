@@ -5,7 +5,10 @@ import BookingList from "../../../components/customer/account/BookingList";
 import ListChat from "../../../components/customer/account/ListChat";
 import ChatWindow from "../../../components/customer/account/ChatWindow";
 import OrderHistory from "../../../components/customer/account/OrderHistory";
-import OrderDetail from "../../../components/customer/account/OrderDetail";  
+import OrderDetail from "../../../components/customer/account/OrderDetail";
+import BASE from "../../../utils/base";
+import banner from "/src/assets/images/dog-sleep.jpg";
+import axios from "axios";
 
 const SidebarItem = ({ active, icon, label, onClick }) => (
   <button
@@ -22,7 +25,7 @@ const UserProfile = () => {
   const [tab, setTab] = useState("booking");
   const [editing, setEditing] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [selectedOrder, setSelectedOrder] = useState(null);  
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const [form, setForm] = useState({
     name: "Nguyen Thanh Dat",
@@ -38,7 +41,7 @@ const UserProfile = () => {
   const fetchProfile = async () => {
     try {
       // Fetch user profile data from API
-      const response = await axios.get("http://localhost:8080/account/profile",
+      const response = await axios.get(`${BASE.BASE_URL}/account/profile`,
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -55,24 +58,31 @@ const UserProfile = () => {
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-const onSave = () => {
-  // Validate email
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(form.email)) {
-    alert("Vui lòng nhập đúng định dạng email.");
-    return;
-  }
+  const onSave = async () => {
+    // Validate email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(form.email)) {
+      alert("Vui lòng nhập đúng định dạng email.");
+      return;
+    }
 
-  // Validate phone 
-  const phonePattern = /^0\d{9}$/;
-  if (!phonePattern.test(form.phone)) {
-    alert("Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số.");
-    return;
-  }
+    // Validate phone 
+    const phonePattern = /^0\d{9}$/;
+    if (!phonePattern.test(form.phone)) {
+      alert("Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số.");
+      return;
+    }
 
-  setEditing(false);
-  alert("Profile saved!");
-};
+    try {
+      await axios.put(
+        `${BASE.BASE_URL}/account/update`,form);
+      alert("Profile saved!");
+      setEditing(false);
+    } catch (error) {
+      alert("Cập nhật thất bại!");
+      console.error(error);
+    }
+  };
 
   const onCancel = () => setEditing(false);
 
@@ -84,7 +94,7 @@ const onSave = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/dog-sleep.jpg"
+            src={banner}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
@@ -134,7 +144,7 @@ const onSave = () => {
                 onClick={() => {
                   setTab("orders");
                   setSelectedChat(null);
- 
+
                 }}
               />
               <div className="mt-6 text-xs text-gray-400 px-2">Help</div>

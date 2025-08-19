@@ -1,5 +1,7 @@
 import React, { useRef } from "react";
 import useIsInViewport from "../../../../hooks/useIsInViewport";
+import img1 from "../../../../assets/images/569cd953a4ce2d9074df.jpg";
+import img2 from "../../../../assets/images/c019b9d6c44b4d15145a.jpg";
 
 const ServiceSection = () => {
   const serviceSectionRef = useRef(null);
@@ -22,10 +24,10 @@ const ServiceSection = () => {
         </div>
         <div className="h-[500px] relative overflow-hidden flex gap-[20px]">
           <div className="bg-[rgba(0,0,0,0.05)] h-full w-[60%] rounded-2xl overflow-hidden">
-            <img src="src\assets\images\569cd953a4ce2d9074df.jpg" />
+            <img src={img1} />
           </div>
           <div className="bg-[rgba(0,0,0,0.05)] h-full w-[40%] rounded-2xl overflow-hidden">
-            <img src="src\assets\images\c019b9d6c44b4d15145a.jpg" />
+            <img src={img2} />
           </div>
         </div>
       </div>

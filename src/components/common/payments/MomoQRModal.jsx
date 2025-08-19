@@ -15,7 +15,7 @@ const MomoQRModal = ({ open, onClose, amountText, qrImg, onPaid }) => {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl w-[95%] max-w-md p-5 shadow-xl">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Thanh toán MoMo (QR)</h3>
+          <h3 className="text-lg font-semibold">Thanh toán qua (QR)</h3>
           <button
             onClick={onClose}
             className="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200"
@@ -25,7 +25,7 @@ const MomoQRModal = ({ open, onClose, amountText, qrImg, onPaid }) => {
         </div>
 
         <p className="text-sm text-gray-600 mb-3">
-          Quét mã bằng ứng dụng MoMo của bạn. Số tiền: <b>{amountText}</b>
+          Quét mã bằng mã QR. Số tiền: <b>{amountText}</b>
         </p>
 
         <div className="rounded-xl border p-3 grid place-items-center">

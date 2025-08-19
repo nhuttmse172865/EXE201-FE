@@ -1,5 +1,7 @@
+import BASE from "../utils/base";
+
 export async function createMomoPayment() {
-  const res = await fetch("http://localhost:8080/payment", {
+  const res = await fetch(`${BASE.BASE_URL}/payment`, {
     method: "GET",
     headers: { Accept: "application/json" },
   });

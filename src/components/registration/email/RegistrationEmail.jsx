@@ -2,8 +2,7 @@ import React from "react";
 import ElevatedButton from "../../common/button/elevated-button/ElevatedButton";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BASE from "../../../utils/base";
-
+import BASE from "../../../utils/base.js";
 const RegistrationEmail = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,9 +22,7 @@ const RegistrationEmail = () => {
       });
 
       if (res.ok) {
-        navigate("/registration/confirm-email", {
-          state: { email: email },
-        });
+        navigate("/");
       } else {
         const err = await res.text();
         alert("Đăng ký thất bại: " + err);

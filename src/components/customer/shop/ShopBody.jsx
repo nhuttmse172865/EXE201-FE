@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE from "../../../utils/base";
+import image1 from "../../../assets/images/shop-banner.jpg";
 
 const ShopBody = () => {
   const [products, setProducts] = useState([]);
@@ -42,11 +43,11 @@ const ShopBody = () => {
 
       const matchesFilter =
         priceFilter === "All" ||
-        (priceFilter === "<15" && product.price < 15) ||
+        (priceFilter === "<15" && product.price < 15000) ||
         (priceFilter === "15-25" &&
-          product.price >= 15 &&
-          product.price <= 25) ||
-        (priceFilter === ">25" && product.price > 25);
+          product.price >= 15000 &&
+          product.price <= 25000) ||
+        (priceFilter === ">25" && product.price > 25000);
 
       return matchesSearch && matchesFilter;
     });
@@ -56,7 +57,7 @@ const ShopBody = () => {
       {/* Banner */}
       <div className="mb-8">
         <img
-          src="/src/assets/images/shop-banner.jpg"
+          src={image1}
           alt="Shop Banner"
           className="w-full h-[250px] object-cover rounded-2xl shadow-md"
         />
@@ -80,9 +81,9 @@ const ShopBody = () => {
           onChange={(e) => setPriceFilter(e.target.value)}
         >
           <option value="All">All Prices</option>
-          <option value="<15">Under $15</option>
-          <option value="15-25">$15 - $25</option>
-          <option value=">25">Over $25</option>
+          <option value="<15">Under 15.000 VND</option>
+          <option value="15-25">15.000 VND - 25. 000 VND</option>
+          <option value=">25">Over 25. 000 VND</option>
         </select>
       </div>
 
@@ -109,7 +110,7 @@ const ShopBody = () => {
               <div className="p-3">
                 <h2 className="text-base font-semibold">{product.name}</h2>
                 <p className="text-sm text-pink-600 font-bold">
-                  {product.price}đ
+                  {product.price.toLocaleString("vi-VN")} VND
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
                   {product.description}

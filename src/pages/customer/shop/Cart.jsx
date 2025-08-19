@@ -8,7 +8,7 @@ import momoQr from "/src/assets/images/momo-qr.jpg"
 import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
  
 async function createMomoPayment() {
-  const res = await fetch("http://localhost:8080/payment", {
+  const res = await fetch(`${BASE.BASE_URL}/payment`, {
     method: "GET",
     headers: { Accept: "application/json" },
   });
@@ -39,15 +39,22 @@ const Cart = () => {
   });
   const [errors, setErrors] = useState({});
 
-  const parsePrice = (p) =>
-    typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
+  const parsePrice = (p) => {
+    if (typeof p === "number") return p;
+    const digits = String(p).replace(/[^\d]/g, "");
+    return digits ? Number(digits) : 0;
+  };
 
   const total = useMemo(
-    () => cartItems.reduce((s, it) => s + parsePrice(it.price), 0),
+    () =>
+      cartItems.reduce(
+        (s, it) => s + parsePrice(it.price) * (it.qty ? Number(it.qty) : 1),
+        0
+      ),
     [cartItems]
   );
-  const currency = (n) =>
-    Number(n).toLocaleString(undefined, { style: "currency", currency: "USD" });
+  
+  const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // mở/đóng modal
 const openModal = () => {
@@ -151,7 +158,7 @@ const handleSubmit = async (e) => {
                 className="flex items-center gap-4 border-b border-gray-300 border-dashed pb-4"
               >
                 <img
-                  src={item.image}  
+                  src={item.imageUrl}  
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />

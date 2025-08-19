@@ -6,8 +6,11 @@ import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
 import momoQr from "/src/assets/images/momo-qr.jpg"   
 import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
+import img1 from "../../../assets/images/pet-food-baner.jpg";
+import BASE from "../../../utils/base.js";
+
 async function createMomoPayment() {
-  const res = await fetch("http://localhost:8080/payment", {
+  const res = await fetch(`${BASE.BASE_URL}/payment`, {
     method: "GET",
     headers: { Accept: "application/json" },
   });
@@ -60,12 +63,11 @@ const DetailProduct = () => {
 
   // util
   const parsePrice = (p) =>
-    typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
+  typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
 
   const unitPrice = useMemo(() => (product ? parsePrice(product.price) : 0), [product]);
-  const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
-  const currency = (n) =>
-    Number(n).toLocaleString(undefined, { style: "currency", currency: "VND" });
+const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
+const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // ESC để đóng modal
   useEffect(() => {
@@ -167,7 +169,7 @@ const handleMomoPaid = () => {
         {/* Banner */}
         <div className="mb-8">
           <img
-            src="/src/assets/images/pet-food-baner.jpg"
+            src={img1}
             alt="Shop Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
