@@ -3,30 +3,29 @@ import Header from "../../../components/customer/header/Header";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
-import cartBanner from "../../../assets/images/cart-banner.jpg";  
-import momoQr from "/src/assets/images/momo-qr.jpg"   
-import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
- 
-async function createMomoPayment() {
-  const res = await fetch(`${BASE.BASE_URL}/payment`, {
-    method: "GET",
-    headers: { Accept: "application/json" },
+import cartBanner from "../../../assets/images/cart-banner.jpg";
+import BASE from "../../../utils/base"; // ✅ thêm
+
+// ✅ API PayOS (qua BE)
+async function createPayOSPayment({ amount, description }) {
+  const res = await fetch(`${BASE.BASE_URL}/payment/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount, description }),
   });
-  if (!res.ok) throw new Error("Payment API error");
-  const data = await res.json();
-  if (data.resultCode !== 0 || !data.payUrl) {
-    throw new Error(data.message || "Không lấy được payUrl");
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.message || `Create payment failed (${res.status})`);
   }
-  return data; // { payUrl, orderId, amount, ... }
+  return json.data; // { checkoutUrl, orderCode, amount, description }
 }
 
 const Cart = () => {
- 
-    const [showMomoQR, setShowMomoQR] = useState(false); 
-  const { cartItems, removeFromCart , clearCart} = useCart();
+  const { cartItems, removeFromCart, clearCart } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -53,30 +52,27 @@ const Cart = () => {
       ),
     [cartItems]
   );
-  
+
   const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
-  // mở/đóng modal
-const openModal = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const uid = localStorage.getItem("currentUserId");
-  if (!isLoggedIn || !uid) {
-    alert("Bạn cần đăng nhập để thanh toán!");
-    navigate("/login");
-    return;
-  }
-  setShowCheckout(true);
-};
+  const openModal = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const uid = localStorage.getItem("currentUserId");
+    if (!isLoggedIn || !uid) {
+      alert("Bạn cần đăng nhập để thanh toán!");
+      navigate("/login");
+      return;
+    }
+    setShowCheckout(true);
+  };
   const closeModal = () => setShowCheckout(false);
 
-  // ESC để đóng
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && closeModal();
     if (showCheckout) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [showCheckout]);
 
-  // chặn nhập sai cho phone
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -105,7 +101,8 @@ const openModal = () => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  if (submitting) return; 
+  if (submitting) return;
+
   const err = validate();
   setErrors(err);
   if (Object.keys(err).length) return;
@@ -113,36 +110,43 @@ const handleSubmit = async (e) => {
   try {
     setSubmitting(true);
 
-    if(form.paymentMethod === "momo") {
- setShowMomoQR(true);
-    } else {
-      // const data = await createMomoPayment();
- 
-      localStorage.setItem("lastOrderId", data.orderId || "");
-      window.location.href = data.payUrl;  
+    if (form.paymentMethod === "momo") {
+      // đảm bảo amount là số nguyên VND
+      const amount = parseInt(String(total).replace(/[^\d]/g, ""), 10) || 0;
+      if (amount <= 0) throw new Error("Tổng tiền không hợp lệ.");
+
+      // PayOS yêu cầu description <= 25 ký tự
+      const makeShortDesc = (amt) => {
+        const s = `PetCare ${amt} VND`; // ngắn gọn, ~ 15–18 ký tự
+        return s.length > 25 ? s.slice(0, 25) : s;
+      };
+      const description = makeShortDesc(amount);
+
+      const data = await createPayOSPayment({ amount, description });
+      if (!data?.checkoutUrl) throw new Error("Không nhận được checkoutUrl");
+
+      window.location.href = data.checkoutUrl; // chuyển sang trang PayOS
+      return;
     }
-  } catch (e) {
-    console.error(e);
-    alert(e.message || "Unable to initiate payment. Please try again.");
+  } catch (e2) {
+    console.error(e2);
+    alert(e2.message || "Unable to initiate payment. Please try again.");
   } finally {
     setSubmitting(false);
   }
 };
 
-  const handleMomoPaid = () => {
-    clearCart();                    
-    setShowMomoQR(false);
-    closeModal();
-    navigate("/checkout/thankyou");  
-  };
+
+  // Nếu bạn dùng returnUrl về FE và muốn clear cart sau khi “PAID”, hãy clear ở trang /payment/result
+  // hoặc nếu BE redirect callback sang FE với ?status=PAID thì clearCart ở trang kết quả.
+
   return (
     <div>
       <Header />
       <div className="container mx-auto px-4 py-10">
-        {/* Banner */}
         <div className="mb-8">
           <img
-            src={cartBanner} // Use the imported image
+            src={cartBanner}
             alt="Cart Banner"
             className="w-full h-[250px] object-cover rounded-2xl shadow-md"
           />
@@ -158,20 +162,18 @@ const handleSubmit = async (e) => {
                 className="flex items-center gap-4 border-b border-gray-300 border-dashed pb-4"
               >
                 <img
-                  src={item.imageUrl}  
+                  src={item.imageUrl || item.image}
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />
                 <div className="flex-1">
                   <h2 className="text-lg font-semibold">{item.name}</h2>
                   <p className="text-pink-600 font-bold">
-                    {typeof item.price === "number"
-                      ? currency(item.price)
-                      : item.price}
+                    {currency(parsePrice(item.price))}
                   </p>
                   <p className="text-sm text-gray-500">{item.description}</p>
                 </div>
- 
+
                 <button
                   onClick={() => removeFromCart(index)}
                   className="text-red-500 hover:underline text-sm"
@@ -202,12 +204,7 @@ const handleSubmit = async (e) => {
           role="dialog"
           aria-modal="true"
         >
-          {/* backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={closeModal}
-          />
-          {/* dialog */}
+          <div className="absolute inset-0 bg-black/40" onClick={closeModal} />
           <div className="relative w-[95%] max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-pink-500 text-white px-5 py-3 font-semibold flex items-center justify-between">
               <span id="checkout-title">Checkout</span>
@@ -219,7 +216,10 @@ const handleSubmit = async (e) => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form
+              onSubmit={handleSubmit}
+              className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <Field
                 label="Họ và tên"
                 name="fullName"
@@ -242,7 +242,7 @@ const handleSubmit = async (e) => {
                 value={form.phone}
                 onChange={handleChange}
                 inputMode="numeric"
-                pattern="0\d{9}"
+                pattern="^0[0-9]{9}$"
                 maxLength={10}
                 placeholder="0xxxxxxxxx"
                 autoComplete="tel"
@@ -282,62 +282,47 @@ const handleSubmit = async (e) => {
                   Phương thức thanh toán
                 </label>
                 <div className="flex items-center gap-6">
- 
-
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="momo"                 
+                      value="momo"
                       checked={form.paymentMethod === "momo"}
                       onChange={handleChange}
                     />
-                    <span>MoMo (Quét QR)</span>
+                    <span>PayOS (MoMo/Thẻ qua PayOS)</span>
                   </label>
-
                 </div>
-                            {errors.paymentMethod && (
-              <p className="text-xs text-red-600 mt-1">{errors.paymentMethod}</p>
-            )}
+                {errors.paymentMethod && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.paymentMethod}
+                  </p>
+                )}
               </div>
 
               <div className="md:col-span-2 flex items-center justify-between pt-2">
                 <div className="text-sm text-gray-600">
                   Tổng thanh toán: <b>{currency(total)}</b>
                 </div>
-<button
-  type="submit"
-  disabled={submitting}
-  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95 disabled:opacity-60"
->
-  {submitting ? "processing..." : "Order confirmation"}
-</button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-6 py-2 bg-gray-900 text-white rounded hover:opacity-95 disabled:opacity-60"
+                >
+                  {submitting ? "processing..." : "Order confirmation"}
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      <MomoQRModal
-        open={showMomoQR}
-        onClose={() => setShowMomoQR(false)}
-        amountText={currency(total)}
-        qrImg={momoQr}
-        onPaid={handleMomoPaid}
-      />
-
       <Footer />
     </div>
   );
 };
 
-function Field({
-  label,
-  name,
-  error,
-  className = "",
-  ...rest
-}) {
+function Field({ label, name, error, className = "", ...rest }) {
   return (
     <div className={className}>
       <label className="text-sm text-gray-600">{label}</label>

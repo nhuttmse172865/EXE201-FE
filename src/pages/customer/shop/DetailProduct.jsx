@@ -1,32 +1,31 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../../components/customer/header/Header";
 import Footer from "../../../components/customer/footer/Footer";
 import { useCart } from "../../../contexts/CartContext";
 import { fetchProductById } from "../../../api/product";
-import momoQr from "/src/assets/images/momo-qr.jpg"   
-import MomoQRModal from "../../../components/common/payments/MomoQRModal.jsx";  
 import img1 from "../../../assets/images/pet-food-baner.jpg";
 import BASE from "../../../utils/base.js";
 
-async function createMomoPayment() {
-  const res = await fetch(`${BASE.BASE_URL}/payment`, {
-    method: "GET",
-    headers: { Accept: "application/json" },
+/* === API PayOS (qua BE) === */
+async function createPayOSPayment({ amount, description }) {
+  const res = await fetch(`${BASE.BASE_URL}/payment/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount, description }),
   });
-  if (!res.ok) throw new Error("Payment API error");
-  const data = await res.json();
-  if (data.resultCode !== 0 || !data.payUrl) {
-    throw new Error(data.message || "Không lấy được payUrl");
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.message || `Create payment failed (${res.status})`);
   }
-  return data; // { payUrl, orderId, amount, ... }
+  return json.data; // { checkoutUrl, orderCode, amount, description }
 }
 
 const DetailProduct = () => {
   const { productId } = useParams();
-    const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { addToCart } = useCart();
-    const [showMomoQR, setShowMomoQR] = useState(false); 
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,11 +41,10 @@ const DetailProduct = () => {
     city: "",
     postalCode: "",
     note: "",
-    paymentMethod: "",
+    paymentMethod: "momo", // dùng "momo" để giữ nguyên validate, thực chất thanh toán qua PayOS
   });
   const [errors, setErrors] = useState({});
 
- 
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -61,13 +59,16 @@ const DetailProduct = () => {
       });
   }, [productId]);
 
-  // util
+  // utils
   const parsePrice = (p) =>
-  typeof p === "number" ? p : Number(String(p).replace(/[^0-9.]/g, "")) || 0;
+    typeof p === "number" ? p : Number(String(p).replace(/[^\d]/g, "")) || 0;
 
-  const unitPrice = useMemo(() => (product ? parsePrice(product.price) : 0), [product]);
-const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
-const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
+  const unitPrice = useMemo(
+    () => (product ? parsePrice(product.price) : 0),
+    [product]
+  );
+  const total = useMemo(() => unitPrice * qty, [unitPrice, qty]);
+  const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
 
   // ESC để đóng modal
   useEffect(() => {
@@ -76,9 +77,12 @@ const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
     return () => document.removeEventListener("keydown", onKey);
   }, [showCheckout]);
 
-  if (loading) return <div className="text-center mt-20 text-gray-500">Loading product...</div>;
-  if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
-  if (!product) return <div className="text-center mt-20 text-red-500">Product not found</div>;
+  if (loading)
+    return <div className="text-center mt-20 text-gray-500">Loading product...</div>;
+  if (error)
+    return <div className="text-center mt-20 text-red-500">{error}</div>;
+  if (!product)
+    return <div className="text-center mt-20 text-red-500">Product not found</div>;
 
   // add to cart
   const handleAddToCart = () => {
@@ -87,22 +91,21 @@ const currency = (n) => `${Number(n).toLocaleString("vi-VN")} VND`;
   };
 
   // mở modal checkout
-const buyNow = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const uid = localStorage.getItem("currentUserId");
-  if (!isLoggedIn || !uid) {
-    alert("Bạn cần đăng nhập để mua ngay!");
-    navigate("/login");
-    return;
-  }
-  setShowCheckout(true);
-};
+  const buyNow = () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const uid = localStorage.getItem("currentUserId");
+    if (!isLoggedIn || !uid) {
+      alert("Bạn cần đăng nhập để mua ngay!");
+      navigate("/login");
+      return;
+    }
+    setShowCheckout(true);
+  };
 
   // +/- quantity
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(99, q + 1));
 
- 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phone") {
@@ -123,13 +126,12 @@ const buyNow = () => {
     if (!form.address.trim()) err.address = "Vui lòng nhập địa chỉ.";
     if (!form.city.trim()) err.city = "Vui lòng nhập thành phố.";
     if (!form.postalCode.trim()) err.postalCode = "Vui lòng nhập mã bưu chính.";
-     if (form.paymentMethod !== "momo") {
-      err.paymentMethod = "Vui lòng chọn phương thức MoMo để tiếp tục.";
+    if (form.paymentMethod !== "momo") {
+      err.paymentMethod = "Vui lòng chọn phương thức MoMo/PayOS để tiếp tục.";
     }
     return err;
   };
 
- 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -141,14 +143,22 @@ const buyNow = () => {
     try {
       setSubmitting(true);
 
-      if(form.paymentMethod === "momo") {
- setShowMomoQR(true);
-    } else {
-      // const data = await createMomoPayment();
- 
-      localStorage.setItem("lastOrderId", data.orderId || "");
-      window.location.href = data.payUrl;  
-    }
+      if (form.paymentMethod === "momo") {
+        // PayOS: yêu cầu amount là số nguyên VND và description <= 25 ký tự
+        const amount = parseInt(String(total).replace(/[^\d]/g, ""), 10) || 0;
+        if (amount <= 0) throw new Error("Tổng tiền không hợp lệ.");
+
+        const makeShortDesc = (amt) => {
+          const s = `PetCare ${amt} VND`; // ngắn gọn, tránh vượt 25 ký tự
+          return s.length > 25 ? s.slice(0, 25) : s;
+        };
+        const description = makeShortDesc(amount);
+
+        const data = await createPayOSPayment({ amount, description });
+        if (!data?.checkoutUrl) throw new Error("Không nhận được checkoutUrl");
+        window.location.href = data.checkoutUrl; // chuyển sang trang thanh toán PayOS
+        return;
+      }
     } catch (e2) {
       console.error(e2);
       alert(e2.message || "Unable to initiate payment. Please try again.");
@@ -156,11 +166,7 @@ const buyNow = () => {
       setSubmitting(false);
     }
   };
-const handleMomoPaid = () => {
-  setShowMomoQR(false);
-  setShowCheckout(false);
-  navigate("/checkout/thankyou");    
-};
+
   return (
     <div>
       <Header />
@@ -185,12 +191,16 @@ const handleMomoPaid = () => {
           <div className="md:w-1/2">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <p className="text-xl text-pink-600 font-semibold mb-2">
-              {typeof product.price === "number" ? currency(product.price) : product.price}
+              {typeof product.price === "number"
+                ? currency(product.price)
+                : product.price}
             </p>
             {!!product.rating && (
               <p className="text-sm text-yellow-600 mb-2">⭐ {product.rating} / 5</p>
             )}
-            {!!product.details && <p className="mb-4 text-gray-700">{product.details}</p>}
+            {!!product.details && (
+              <p className="mb-4 text-gray-700">{product.details}</p>
+            )}
 
             {/* Quantity +/- */}
             <div className="flex items-center gap-4 mb-4">
@@ -294,7 +304,7 @@ const handleMomoPaid = () => {
                 value={form.phone}
                 onChange={handleChange}
                 inputMode="numeric"
-                pattern="0\d{9}"
+                pattern="^0[0-9]{9}$"    
                 maxLength={10}
                 placeholder="0xxxxxxxxx"
                 autoComplete="tel"
@@ -334,21 +344,20 @@ const handleMomoPaid = () => {
                   Phương thức thanh toán
                 </label>
                 <div className="flex items-center gap-6">
- 
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="momo"                 
+                      value="momo"
                       checked={form.paymentMethod === "momo"}
                       onChange={handleChange}
                     />
-                    <span>MoMo (Quét QR)</span>
+                    <span>PayOS (MoMo/Thẻ qua PayOS)</span>
                   </label>
                 </div>
-                 {errors.paymentMethod && (
-              <p className="text-xs text-red-600 mt-1">{errors.paymentMethod}</p>
-            )}
+                {errors.paymentMethod && (
+                  <p className="text-xs text-red-600 mt-1">{errors.paymentMethod}</p>
+                )}
               </div>
 
               <div className="md:col-span-2 flex items-center justify-between pt-2">
@@ -367,14 +376,6 @@ const handleMomoPaid = () => {
           </div>
         </div>
       )}
-
-      <MomoQRModal
-        open={showMomoQR}
-        onClose={() => setShowMomoQR(false)}
-        amountText={currency(total)}
-        qrImg={momoQr}
-         onPaid={handleMomoPaid}  
-      />
 
       <Footer />
     </div>

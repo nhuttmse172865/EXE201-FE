@@ -25,6 +25,8 @@ import UserProfile from "../pages/customer/account/UserProfile";
 import LoginPrivate from "../pages/LoginPrivate/LoginPrivate";
 import ThankYou from "../pages/thankyou/ThankYou";
 import ThankYouClone from "../pages/thankyou/ThankYouClone";
+import PayResult from "../pages/payment/PayResult";
+import PayCancel from "../pages/payment/PayCancel";
 const Router = () => {
   const generateRoutes = (routes) => {
     return routes.map((route, index) => (
@@ -61,6 +63,8 @@ const Router = () => {
       <Route path="/loginprivate" element={<LoginPrivate />} />
       <Route path="/checkout/result" element={<ThankYou />} />
       <Route path="/checkout/thankyou" element={<ThankYouClone />} />
+      <Route path="/payment/result" element={<PayResult />} />
+<Route path="/payment/cancel" element={<PayCancel />} />
     </Routes>
   );
 };
