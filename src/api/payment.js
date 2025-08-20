@@ -1,15 +1,23 @@
-import BASE from "../utils/base";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
-export async function createMomoPayment() {
-  const res = await fetch(`${BASE.BASE_URL}/payment`, {
-    method: "GET",
-    headers: { Accept: "application/json" },
+// Tạo link PayOS qua BE
+export async function createPayment({ amount, description }) {
+  const res = await fetch(`${BASE_URL}/payment/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount, description }),
   });
-  if (!res.ok) throw new Error("Payment API error");
-  const data = await res.json();
-  // data = { resultCode, message, orderId, requestId, amount, payUrl, ... }
-  if (data.resultCode !== 0 || !data.payUrl) {
-    throw new Error(data.message || "Cannot get payUrl");
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.success) {
+    const msg = json?.message || `Create payment failed (${res.status})`;
+    throw new Error(msg);
   }
-  return data;
+  return json.data; // { checkoutUrl, orderCode, amount, description }
+}
+
+// (tuỳ chọn) đọc trạng thái theo orderId nếu bạn dùng DB
+export async function getPaymentStatus(orderId) {
+  const res = await fetch(`${BASE_URL}/payment/status/${orderId}`);
+  if (!res.ok) throw new Error("Không lấy được trạng thái thanh toán");
+  return res.json();
 }
